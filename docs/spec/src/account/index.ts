@@ -12,8 +12,8 @@ export const accountSpec: StepSpec<IntegrationConfig>[] = [
     entities: [
       {
         resourceName: 'Account',
-        _type: 'acme_account',
-        _class: ['Account'],
+        _type: 'vsphere_client',
+        _class: ['Application'],
       },
     ],
     relationships: [],
