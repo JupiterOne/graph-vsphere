@@ -1,28 +1,34 @@
 # Development
 
-Add details here to give a brief overview of how to work with the provider APIs.
-Please reference any SDKs or API docs used to help build the integration here.
+This integration focuses on VMware vSphere and is using
+[vCenter REST APIs](https://developer.vmware.com/apis/vsphere-automation/latest/vcenter/)
+for interacting with the VMware vSphere vCenter.
 
 ## Prerequisites
 
-Supply details about software or tooling (like maybe Docker or Terraform) that
-is needed for development here.
-
-Please supply references to documentation that details how to install those
-dependencies here.
-
-Tools like Node.js and NPM are already covered in the [README](../README.md) so
-don't bother documenting that here.
+Active SDDC in VMware vSphere is required.
 
 ## Provider account setup
 
-Please provide information about the steps needed to create an account with a
-provider. Images and references to a provider's documentation is very helpful
-for new developers picking up your work.
+1. Have SDDC set up in VMware inventory.
+2. Make sure you're able to access SDDC's vCenter.
+3. Note down the vCenter credentials (login and password).
+4. Note down the vCenter path in the vSphere Client
+   (vcenter.sddc-X-YY-ZZ-F.vmwarevmc.com).
 
 ## Authentication
 
-Supply details here for information on how to authenticate with a provider so
-that developers have an idea of what's needed to hit APIs. It may be useful to
-provide explanations for each value specified in the
-[`IntegrationInstanceConfigFieldMap`](../src/config.ts).
+Provide the vCenter login as LOGIN, vCenter password as PASSWORD, and the
+vCenter path (step 4 above) as DOMAIN in the `.env`. You can use
+[.env.example](../.env.example) as reference.
+
+## Developing while using HAR recordings
+
+Because creating SDDC isn't super simple, we've included har-server dependency
+which allows us to re-use stored HAR recordings and run the integration
+(locally, during the development) against them.
+
+1. serve:har - Starts the har-server
+2. start:har - Runs the integration against har-server
+3. serve:har:error - Starts har-server but serves errors
+4. test:env-har - Runs tests against har server

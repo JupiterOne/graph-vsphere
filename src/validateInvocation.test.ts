@@ -21,7 +21,7 @@ describe('#validateInvocation', () => {
     });
 
     await expect(validateInvocation(executionContext)).rejects.toThrow(
-      'Config requires all of {clientId, clientSecret}',
+      'Config requires all of {domain, login, password}',
     );
   });
 
@@ -67,8 +67,9 @@ describe('#validateInvocation', () => {
 
         const executionContext = createMockExecutionContext({
           instanceConfig: {
-            clientId: 'INVALID',
-            clientSecret: integrationConfig.clientSecret,
+            domain: 'INVALID',
+            login: integrationConfig.login,
+            password: integrationConfig.password,
           },
         });
 
@@ -90,8 +91,9 @@ describe('#validateInvocation', () => {
 
         const executionContext = createMockExecutionContext({
           instanceConfig: {
-            clientId: integrationConfig.clientSecret,
-            clientSecret: 'INVALID',
+            domain: integrationConfig.domain,
+            login: integrationConfig.login,
+            password: 'INVALID',
           },
         });
 
