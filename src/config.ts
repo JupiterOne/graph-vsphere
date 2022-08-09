@@ -6,25 +6,14 @@ import {
 } from '@jupiterone/integration-sdk-core';
 import { createAPIClient } from './client';
 
-/**
- * A type describing the configuration fields required to execute the
- * integration for a specific account in the data provider.
- *
- * When executing the integration in a development environment, these values may
- * be provided in a `.env` file with environment variables. For example:
- *
- * - `CLIENT_ID=123` becomes `instance.config.clientId = '123'`
- * - `CLIENT_SECRET=abc` becomes `instance.config.clientSecret = 'abc'`
- *
- * Environment variables are NOT used when the integration is executing in a
- * managed environment. For example, in JupiterOne, users configure
- * `instance.config` in a UI.
- */
 export const instanceConfigFields: IntegrationInstanceConfigFieldMap = {
-  clientId: {
+  domain: {
     type: 'string',
   },
-  clientSecret: {
+  login: {
+    type: 'string',
+  },
+  password: {
     type: 'string',
     mask: true,
   },
@@ -36,14 +25,19 @@ export const instanceConfigFields: IntegrationInstanceConfigFieldMap = {
  */
 export interface IntegrationConfig extends IntegrationInstanceConfig {
   /**
-   * The provider API client ID used to authenticate requests.
+   * The provider domain used for requests.
    */
-  clientId: string;
+  domain: string;
 
   /**
-   * The provider API client secret used to authenticate requests.
+   * The provider account login used to get session token.
    */
-  clientSecret: string;
+  login: string;
+
+  /**
+   * The provider account password used to get session token.
+   */
+  password: string;
 }
 
 export async function validateInvocation(
@@ -51,9 +45,9 @@ export async function validateInvocation(
 ) {
   const { config } = context.instance;
 
-  if (!config.clientId || !config.clientSecret) {
+  if (!config.domain) {
     throw new IntegrationValidationError(
-      'Config requires all of {clientId, clientSecret}',
+      'Config requires all of {domain, login, password}',
     );
   }
 

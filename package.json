@@ -1,7 +1,7 @@
 {
-  "name": "@jupiterone/integration-template",
+  "name": "@jupiterone/graph-vsphere",
   "version": "0.0.0",
-  "description": "A JupiterOne Integration",
+  "description": "A JupiterOne Integration for ingesting data of the VMware vSphere",
   "license": "MPL-2.0",
   "main": "src/index.js",
   "types": "src/index.d.ts",
@@ -14,6 +14,10 @@
   },
   "scripts": {
     "start": "j1-integration collect",
+    "start:har": "NODE_TLS_REJECT_UNAUTHORIZED='0' j1-integration collect",
+    "serve:har": "node mergeRecordings.js && sudo -E env \"PATH=$PATH\" har-server mergedRecordings.har --listeningSslPort 443 -p 80 -s -h -r",
+    "serve:har:error": "node mergeRecordings.js --error && sudo -E env \"PATH=$PATH\" har-server mergedRecordings.har --listeningSslPort 443 -p 80 -s -h -r",
+    "test:env-har": "NODE_TLS_REJECT_UNAUTHORIZED='0' LOAD_ENV=1 yarn test",
     "graph": "j1-integration visualize",
     "graph:types": "j1-integration visualize-types",
     "graph:spec": "j1-integration visualize-types --project-path docs/spec --output-file ./.j1-integration/types-graph/index.spec.html",
@@ -35,6 +39,13 @@
   "devDependencies": {
     "@jupiterone/integration-sdk-core": "^8.8.0",
     "@jupiterone/integration-sdk-dev-tools": "^8.8.0",
-    "@jupiterone/integration-sdk-testing": "^8.8.0"
+    "@jupiterone/integration-sdk-testing": "^8.8.0",
+    "har-server": "^0.4.3"
+  },
+  "dependencies": {
+    "@lifeomic/attempt": "^3.0.3",
+    "lodash": "^4.17.21",
+    "minimist": "^1.2.6",
+    "node-fetch": "2"
   }
 }
