@@ -21,6 +21,24 @@
   VMware vSphere configured.
 - You must have permission in JupiterOne to install new integrations.
 
+## Firewall
+
+It will probably be necessary to whitelist JupiterOne servers in your VMware
+vSphere. To do that you'll need to navigate to VMware Cloud > Inventory and
+select your SDDC. Next, you should navigate to the "Networking & Security" tab
+and assign JupiterOne static IPs to the new management group (Inventory >
+Groups). After doing that, you'll need to go to the "Gateway Firewall" section,
+select the "Management Gateway" tab and create the following new rule:
+
+Source: `[created group]` Destinations: `vCenter` Services: `HTTPS` Action:
+`Allow`
+
+After publishing this rule, the JupiterOne servers will be able to allowed to
+interact with your vSphere SDDC and run the integration.
+
+The list of JupiterOne static IPs can be
+[found here](https://jupiterone.atlassian.net/wiki/spaces/INT/pages/37618044/Public+IPs+for+Integrations+outbound+traffic+enabling+on-premise+support).
+
 ## Support
 
 If you need help with this integration, please contact
