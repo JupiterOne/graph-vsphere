@@ -13,6 +13,7 @@
     "access": "public"
   },
   "scripts": {
+    "execute": "./scripts/run.sh",
     "start": "j1-integration collect",
     "start:har": "NODE_TLS_REJECT_UNAUTHORIZED='0' j1-integration collect",
     "serve:har": "node mergeRecordings.js && sudo -E env \"PATH=$PATH\" har-server mergedRecordings.har --listeningSslPort 443 -p 80 -s -h -r",
