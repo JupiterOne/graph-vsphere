@@ -8,6 +8,12 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 1.0.1 - 2022-10-21
+
+### Added
+
+- publish docker image of this project to Docker Hub
+
 ## 1.0.0 - 2022-08-09
 
 ### Added
