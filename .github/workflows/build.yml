@@ -1,9 +1,13 @@
 name: Build
 on:
   pull_request:
+    branches:
+      - main
   push:
     branches:
       - main
+    tags:
+      - 'v*.*.*'
 
 jobs:
   test:
@@ -91,3 +95,13 @@ jobs:
             ${{ steps.changelog_reader.outputs.status == 'prereleased' }}
           draft: ${{ steps.changelog_reader.outputs.status == 'unreleased' }}
         continue-on-error: true
+
+  # Publish image of integration to Docker Hub on pushed semver tags & push commits to main
+  publish-image:
+    if: ${{github.event_name != 'pull_request'}}
+    uses: jupiterone/.github/.github/workflows/publish_integration_docker_image.yaml@v1.0.0
+    with:
+      package-name: 'jupiterone/graph-vsphere'
+    secrets:
+      DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
