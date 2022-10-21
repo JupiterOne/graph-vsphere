@@ -26,6 +26,21 @@
 If you need help with this integration, please contact
 [JupiterOne Support](https://support.jupiterone.io).
 
+## Docker Walkthrough
+
+This integration is also has an image published on
+[Docker Hub](https://hub.docker.com/r/jupiterone/graph-vsphere). It will perform
+a
+[j1-integration collect](https://github.com/JupiterOne/sdk/blob/main/docs/integrations/development.md#command-j1-integration-collect)
+command when ran. When running, you must set the following environment
+variables:
+
+- JUPITERONE_API_KEY: api-key for integration instance in question
+- JUPITERONE_ACCOUNT: account id
+- DOMAIN: your vCenter path in the vSphere Client
+- LOGIN: login for vSphere
+- PASSWORD: password for vSphere
+
 ## Integration Walkthrough
 
 ### In VMware vSphere
