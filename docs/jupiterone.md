@@ -31,7 +31,7 @@ If you need help with this integration, please contact
 This integration also has an image published on
 [Docker Hub](https://hub.docker.com/r/jupiterone/graph-vsphere). It will perform
 a
-[j1-integration collect](https://github.com/JupiterOne/sdk/blob/main/docs/integrations/development.md#command-j1-integration-collect)
+[j1-integration run](https://github.com/JupiterOne/sdk/blob/main/docs/integrations/development.md#command-j1-integration-run)
 command when ran. When running, you must set the following environment
 variables:
 
