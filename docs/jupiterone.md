@@ -28,7 +28,7 @@ If you need help with this integration, please contact
 
 ## Docker Walkthrough
 
-This integration is also has an image published on
+This integration also has an image published on
 [Docker Hub](https://hub.docker.com/r/jupiterone/graph-vsphere). It will perform
 a
 [j1-integration collect](https://github.com/JupiterOne/sdk/blob/main/docs/integrations/development.md#command-j1-integration-collect)
