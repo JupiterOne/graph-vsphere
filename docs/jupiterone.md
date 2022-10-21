@@ -35,8 +35,11 @@ a
 command when ran. When running, you must set the following environment
 variables:
 
-- JUPITERONE_API_KEY: api-key for integration instance in question
+- JUPITERONE_API_KEY: api-key for integration instance you would like to sync
+  with
 - JUPITERONE_ACCOUNT: account id
+- INTEGRATION_INSTANCE_ID: id of the integration instance you would like to sync
+  with
 - DOMAIN: your vCenter path in the vSphere Client
 - LOGIN: login for vSphere
 - PASSWORD: password for vSphere
