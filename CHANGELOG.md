@@ -8,6 +8,13 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 1.0.2 - 2022-10-21
+
+### Changed
+
+- update docs
+- docker image will collect+sync instead of just collect
+
 ## 1.0.1 - 2022-10-21
 
 ### Added
