@@ -32,3 +32,16 @@ which allows us to re-use stored HAR recordings and run the integration
 2. start:har - Runs the integration against har-server
 3. serve:har:error - Starts har-server but serves errors
 4. test:env-har - Runs tests against har server
+
+## Bundling Dependencies for Published Docker Image
+
+This integration is published to Jupiterone's DockerHub whenever we release a
+package update. This image must be able to be run standalone and cannot rely on
+peerDependencies being present at runtime. Therefore, a slightly different
+`package.json` file is required that includes the necessary dependencies that
+remain peerDependencies or devDependencies for the project proper. This file is
+called `docker.package.json`. Prior to bumping our `package.json` version, we
+should bump `docker.package.json`. We should also keep depencencies on identical
+versions (e.g ` "@jupiterone/integration-sdk-core": "^8.8.0"`). See the
+`Dockerfile` in project root to gain an understanding on how we use this file to
+install our dependencies for our docker image.

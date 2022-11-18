@@ -8,6 +8,14 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Changed
+
+- fix Dockerfile to include necessary sdk deps to run integration on-prem
+- update docs
+- added `docker.env.example` file
+- added `docker.package.json`. This MUST be updated alongside our normal
+  `package.json`
+
 ## 1.0.2 - 2022-10-21
 
 ### Changed
