@@ -32,7 +32,6 @@
     "prepush": "yarn format:check && yarn lint && yarn type-check && jest --changedSince main"
   },
   "dependencies": {
-    "@jupiterone/integration-sdk-core": "^8.8.0",
     "@jupiterone/integration-sdk-dev-tools": "^8.8.0",
     "@lifeomic/attempt": "^3.0.3",
     "lodash": "^4.17.21",
