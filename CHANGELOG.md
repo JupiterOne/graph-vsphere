@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 1.0.3 - 2022-11-18
+
 ### Changed
 
 - fix Dockerfile to include necessary sdk deps to run integration on-prem
