@@ -37,12 +37,15 @@ variables:
 
 - JUPITERONE_API_KEY: api-key for integration instance you would like to sync
   with
-- JUPITERONE_ACCOUNT: account id
+- JUPITERONE_ACCOUNT_ID: account id
 - INTEGRATION_INSTANCE_ID: id of the integration instance you would like to sync
   with
 - DOMAIN: your vCenter path in the vSphere Client
 - LOGIN: login for vSphere
 - PASSWORD: password for vSphere
+
+This can be added as an environment file (e.g `docker.env`) and passed using the
+`--env-file` option when performing the `docker run` command.
 
 ## Integration Walkthrough
 

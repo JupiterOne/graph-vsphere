@@ -1,0 +1,41 @@
+{
+  "name": "@jupiterone/graph-vsphere",
+  "version": "1.0.3",
+  "description": "A JupiterOne Integration for ingesting data of the VMware vSphere",
+  "license": "MPL-2.0",
+  "main": "src/index.js",
+  "types": "src/index.d.ts",
+  "files": ["src", "jupiterone"],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "execute": "./scripts/run.sh",
+    "start": "j1-integration collect",
+    "start:har": "NODE_TLS_REJECT_UNAUTHORIZED='0' j1-integration collect",
+    "serve:har": "node mergeRecordings.js && sudo -E env \"PATH=$PATH\" har-server mergedRecordings.har --listeningSslPort 443 -p 80 -s -h -r",
+    "serve:har:error": "node mergeRecordings.js --error && sudo -E env \"PATH=$PATH\" har-server mergedRecordings.har --listeningSslPort 443 -p 80 -s -h -r",
+    "test:env-har": "NODE_TLS_REJECT_UNAUTHORIZED='0' LOAD_ENV=1 yarn test",
+    "graph": "j1-integration visualize",
+    "graph:types": "j1-integration visualize-types",
+    "graph:spec": "j1-integration visualize-types --project-path docs/spec --output-file ./.j1-integration/types-graph/index.spec.html",
+    "validate:questions:dry": "j1-integration validate-question-file --dry-run",
+    "validate:questions": "j1-integration validate-question-file -a $MANAGED_QUESTIONS_JUPITERONE_ACCOUNT_ID -k $MANAGED_QUESTIONS_JUPITERONE_API_KEY",
+    "lint": "eslint . --cache --fix --ext .ts,.tsx",
+    "format": "prettier --write '**/*.{ts,js,json,css,md,yml}'",
+    "format:check": "prettier --check '**/*.{ts,js,json,css,md,yml}'",
+    "type-check": "tsc",
+    "test": "jest",
+    "test:env": "LOAD_ENV=1 yarn test",
+    "test:ci": "yarn format:check && yarn lint && yarn type-check && yarn test",
+    "build": "tsc -p tsconfig.dist.json --declaration && cp README.md dist/README.md && cp -r jupiterone/ dist/jupiterone/",
+    "prepush": "yarn format:check && yarn lint && yarn type-check && jest --changedSince main"
+  },
+  "dependencies": {
+    "@jupiterone/integration-sdk-dev-tools": "^8.8.0",
+    "@lifeomic/attempt": "^3.0.3",
+    "lodash": "^4.17.21",
+    "minimist": "^1.2.6",
+    "node-fetch": "2"
+  }
+}
