@@ -14,7 +14,7 @@ and this project adheres to
 
 - The config value `domain` must now include the full domain. Previously,
   `.vmwarevmc.com` was appended to the supplied domain requiring only
-  `vcenter.sddc-X-YY-ZZ-F`. The following is a correct example for a domain:
+  `vcenter.sddc-X-YY-ZZ-F`. The following is a correct example of a domain:
   `vcenter.sddc-X-YY-ZZ-F.vmwarevmc.com`.
 
 ## 1.0.3 - 2022-11-18
