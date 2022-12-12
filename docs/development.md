@@ -13,13 +13,13 @@ Active SDDC in VMware vSphere is required.
 1. Have SDDC set up in VMware inventory.
 2. Make sure you're able to access SDDC's vCenter.
 3. Note down the vCenter credentials (login and password).
-4. Note down the vCenter path in the vSphere Client
+4. Note down the vCenter domain in the vSphere Client
    (vcenter.sddc-X-YY-ZZ-F.vmwarevmc.com).
 
 ## Authentication
 
 Provide the vCenter login as LOGIN, vCenter password as PASSWORD, and the
-vCenter path (step 4 above) as DOMAIN in the `.env`. You can use
+vCenter domain (step 4 above) as DOMAIN in the `.env`. You can use
 [.env.example](../.env.example) as reference.
 
 ## Developing while using HAR recordings

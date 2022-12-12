@@ -8,6 +8,15 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 1.1.0 - 2022-12-12
+
+### Changed
+
+- The config value `domain` must now include the full domain. Previously,
+  `.vmwarevmc.com` was appended to the supplied domain requiring only
+  `vcenter.sddc-X-YY-ZZ-F`. The following is a correct example for a domain:
+  `vcenter.sddc-X-YY-ZZ-F.vmwarevmc.com`.
+
 ## 1.0.3 - 2022-11-18
 
 ### Changed
