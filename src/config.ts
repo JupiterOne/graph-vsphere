@@ -26,6 +26,7 @@ export const instanceConfigFields: IntegrationInstanceConfigFieldMap = {
 export interface IntegrationConfig extends IntegrationInstanceConfig {
   /**
    * The provider domain used for requests.
+   *
    */
   domain: string;
 
@@ -45,7 +46,7 @@ export async function validateInvocation(
 ) {
   const { config } = context.instance;
 
-  if (!config.domain) {
+  if (!config.domain || !config.login || !config.password) {
     throw new IntegrationValidationError(
       'Config requires all of {domain, login, password}',
     );

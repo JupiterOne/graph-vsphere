@@ -25,7 +25,7 @@ export type ResourceIteratee<T> = (each: T) => Promise<void> | void;
 
 export class APIClient {
   constructor(readonly config: IntegrationConfig) {}
-  private baseUri = `https://${this.config.domain}.vmwarevmc.com/api/`;
+  private baseUri = `https://${this.config.domain}/api/`;
   private withBaseUri = (path: string) => `${this.baseUri}${path}`;
   private sessionId = '';
 
