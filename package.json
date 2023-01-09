@@ -41,7 +41,8 @@
     "@jupiterone/integration-sdk-core": "^8.8.0",
     "@jupiterone/integration-sdk-dev-tools": "^8.8.0",
     "@jupiterone/integration-sdk-testing": "^8.8.0",
-    "har-server": "^0.4.3"
+    "har-server": "^0.4.3",
+    "url-exists": "^1.0.3"
   },
   "dependencies": {
     "@lifeomic/attempt": "^3.0.3",
