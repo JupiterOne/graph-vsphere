@@ -84,11 +84,29 @@ export class APIClient {
     const uri = this.withBaseUri('session');
     if (!this.sessionId) {
       try {
+        const sanitizedLogin = this.config.login.replace(
+          /[\u{0080}-\u{FFFF}]/gu,
+          '',
+        );
+        const sanitizedPassword = this.config.password.replace(
+          /[\u{0080}-\u{FFFF}]/gu,
+          '',
+        );
+        console.log(
+          `Sanitized `,
+          this.config.login.length - sanitizedLogin.length,
+          ` LOGIN characters`,
+        );
+        console.log(
+          `Sanitized `,
+          this.config.password.length - sanitizedPassword.length,
+          ` PASSWORD characters`,
+        );
         const res: Response = await fetch(uri, {
           method: 'POST',
           headers: {
             Authorization: `Basic ${Buffer.from(
-              `${this.config.login}:${this.config.password}`,
+              `${sanitizedLogin}:${sanitizedPassword}`,
             ).toString('base64')}`,
           },
         });
@@ -96,6 +114,9 @@ export class APIClient {
         const sessionId = await res.json();
         this.sessionId = sessionId;
       } catch (err) {
+        if (err.body) {
+          console.log(`Additional logging: `, err.body);
+        }
         throw new IntegrationProviderAPIError({
           endpoint: uri,
           status: err.status,
