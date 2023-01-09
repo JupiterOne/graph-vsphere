@@ -25,6 +25,6 @@ console.log(
 
 var testUri = `https://${process.env.DOMAIN}/api/session`;
 
-urlExists(process.env.DOMAIN, function (err, exists) {
+urlExists(testUri, function (err, exists) {
   console.log(`${testUri} checking if it can be reached:  ${exists}`);
 });
