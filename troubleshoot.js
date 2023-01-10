@@ -25,6 +25,11 @@ console.log(
 
 var testUri = `https://${process.env.DOMAIN}/api/session`;
 
+// Disable TLS certificate verification
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+
 urlExists(testUri, function (err, exists) {
-  console.log(`${testUri} checking if it can be reached:  ${exists}`);
+  console.log(
+    `${testUri} checking if it can be reached with TLS certificate verification disabled:  ${exists}`,
+  );
 });
