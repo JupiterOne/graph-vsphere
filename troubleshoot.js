@@ -11,7 +11,8 @@ const sanitizedPassword = process.env.PASSWORD.replace(
   /[\u{0080}-\u{FFFF}]/gu,
   '',
 );
-console.log(`Checking for hidden characters in LOGIN and PASSWORD`);
+const sanitizedDomain = process.env.DOMAIN.replace(/[\u{0080}-\u{FFFF}]/gu, '');
+console.log(`Checking for hidden characters in LOGIN, PASSWORD, and DOMAIN`);
 console.log(
   `Found `,
   process.env.LOGIN.length - sanitizedLogin.length,
@@ -22,8 +23,13 @@ console.log(
   process.env.PASSWORD.length - sanitizedPassword.length,
   ` hidden characters in PASSWORD`,
 );
+console.log(
+  `Found `,
+  process.env.DOMAIN.length - sanitizedDomain.length,
+  ` hidden characters in DOMAIN`,
+);
 
-var testUri = `https://${process.env.DOMAIN}/api/session`;
+var testUri = `https://${sanitizedDomain}`;
 
 // Disable TLS certificate verification
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
