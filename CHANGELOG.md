@@ -8,6 +8,14 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 1.2.0 - 2023-01-11
+
+### Changed
+
+- Properties for vsphere_host entities have been updated to match the current
+  data-model schema.
+- Duplicate vsphere_vm-USES->vsphere_network relationships are now prevented.
+
 ## 1.1.0 - 2022-12-12
 
 ### Changed
