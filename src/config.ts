@@ -17,6 +17,9 @@ export const instanceConfigFields: IntegrationInstanceConfigFieldMap = {
     type: 'string',
     mask: true,
   },
+  disableTlsVerification: {
+    type: 'boolean',
+  },
 };
 
 /**
@@ -59,6 +62,7 @@ export async function validateInvocation(
 
   if (config.disableTlsVerification) {
     process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+    context.logger.warn(`Disabling TLS certificate verification based on .env`);
     context.logger.publishEvent({
       name: 'disable_tls_verify',
       description:
