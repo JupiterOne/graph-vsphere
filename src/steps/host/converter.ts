@@ -14,7 +14,7 @@ export function createHostEntity(host: VsphereHost): Entity {
         _key: `vsphere_host:${host.host}`,
         _type: Entities.HOST._type,
         _class: Entities.HOST._class,
-        host: host.host,
+        hostname: host.host,
         name: host.name,
         connectionState: host.connection_state,
         powerState: host.power_state,

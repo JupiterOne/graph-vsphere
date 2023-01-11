@@ -17,6 +17,10 @@ export const instanceConfigFields: IntegrationInstanceConfigFieldMap = {
     type: 'string',
     mask: true,
   },
+  disableTlsVerification: {
+    type: 'boolean',
+    optional: true,
+  },
 };
 
 /**
@@ -39,6 +43,11 @@ export interface IntegrationConfig extends IntegrationInstanceConfig {
    * The provider account password used to get session token.
    */
   password: string;
+
+  /**
+   * Disable TLS certificate verification for hosts that cannot install certificates.
+   */
+  disableTlsVerification?: boolean;
 }
 
 export async function validateInvocation(
@@ -50,6 +59,18 @@ export async function validateInvocation(
     throw new IntegrationValidationError(
       'Config requires all of {domain, login, password}',
     );
+  }
+
+  if (config.disableTlsVerification) {
+    process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+    context.logger.warn(
+      `Disabling TLS certificate verification based on .env.  If possible, please install valid TLS certificates into vSphere server.`,
+    );
+    context.logger.publishEvent({
+      name: 'disable_tls_verify',
+      description:
+        'Disabling TLS certificate verification. NOT RECOMMENDED: If possible, please install valid TLS certificates into vSphere server.',
+    });
   }
 
   const apiClient = createAPIClient(config);

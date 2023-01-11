@@ -36,14 +36,19 @@ export async function buildVmNetworkRelationship({
           getNetworkKey(nics.backing.network),
         );
 
-        if (networkEntity)
-          await jobState.addRelationship(
-            createDirectRelationship({
-              _class: RelationshipClass.USES,
-              from: vmEntity,
-              to: networkEntity,
-            }),
-          );
+        if (networkEntity) {
+          const vmUsesNetwork = createDirectRelationship({
+            _class: RelationshipClass.USES,
+            from: vmEntity,
+            to: networkEntity,
+          });
+          // We need to check that the relationship doesn't yet exist
+          // for those instances where a VM has multiple nics on the
+          // same network.
+          if (!jobState.hasKey(vmUsesNetwork._key)) {
+            await jobState.addRelationship(vmUsesNetwork);
+          }
+        }
       }
     },
   );
