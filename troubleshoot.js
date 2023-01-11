@@ -6,6 +6,9 @@ dotenv.config({
   path: path.join(__dirname, '.env'),
 });
 
+console.log(`vSphere Troubleshooting`);
+console.log(`nodejs version:  `, process.version);
+
 const sanitizedLogin = process.env.LOGIN.replace(/[\u{0080}-\u{FFFF}]/gu, '');
 const sanitizedPassword = process.env.PASSWORD.replace(
   /[\u{0080}-\u{FFFF}]/gu,
