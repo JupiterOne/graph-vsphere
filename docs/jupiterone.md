@@ -17,8 +17,11 @@
 
 ## Requirements
 
-- JupiterOne requires a vSphere vCenter username and password. You need to have
-  VMware vSphere configured.
+- JupiterOne requires the username and password for an account configured to
+  access VMware vSphere. The integration will attempt to run all steps and will
+  complete as many as possible based on the account's access. It is recommended
+  that the account is provided with global readonly permissions to all inventory
+  hierarchies.
 - You must have permission in JupiterOne to install new integrations.
 
 ## Support
