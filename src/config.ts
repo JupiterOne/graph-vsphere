@@ -73,6 +73,6 @@ export async function validateInvocation(
     });
   }
 
-  const apiClient = createAPIClient(config);
+  const apiClient = createAPIClient(config, context.logger);
   await apiClient.verifyAuthentication();
 }

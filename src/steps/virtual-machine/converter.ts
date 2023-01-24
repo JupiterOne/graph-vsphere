@@ -3,10 +3,13 @@ import {
   Entity,
 } from '@jupiterone/integration-sdk-core';
 
-import { VsphereVm } from '../../types';
+import { VsphereGuestInfo, VsphereVm } from '../../types';
 import { Entities } from '../constants';
 
-export function createVmEntity(vm: VsphereVm): Entity {
+export function createVmEntity(
+  vm: VsphereVm,
+  vmGuest: VsphereGuestInfo | null,
+): Entity {
   return createIntegrationEntity({
     entityData: {
       source: vm,
@@ -19,6 +22,8 @@ export function createVmEntity(vm: VsphereVm): Entity {
         name: vm.name,
         powerState: vm.power_state,
         cpuCount: vm.cpu_count,
+        host: vmGuest?.host_name,
+        ipAddress: vmGuest?.ip_address,
       },
     },
   });

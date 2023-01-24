@@ -16,8 +16,9 @@ import {
 export async function fetchDistributedSwitches({
   instance,
   jobState,
+  logger,
 }: IntegrationStepExecutionContext<IntegrationConfig>) {
-  const apiClient = createAPIClient(instance.config);
+  const apiClient = createAPIClient(instance.config, logger);
 
   await jobState.iterateEntities(
     { _type: Entities.CLUSTER._type },

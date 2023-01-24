@@ -1,6 +1,7 @@
 import fetch, { Response } from 'node-fetch';
 import { retry } from '@lifeomic/attempt';
 import {
+  IntegrationLogger,
   IntegrationProviderAPIError,
   IntegrationProviderAuthenticationError,
 } from '@jupiterone/integration-sdk-core';
@@ -14,6 +15,7 @@ import {
   VsphereDatastore,
   VsphereDatastoreDetails,
   VsphereDistributedSwitch,
+  VsphereGuestInfo,
   VsphereHost,
   VsphereNamespace,
   VsphereNetwork,
@@ -24,7 +26,10 @@ import {
 export type ResourceIteratee<T> = (each: T) => Promise<void> | void;
 
 export class APIClient {
-  constructor(readonly config: IntegrationConfig) {}
+  constructor(
+    readonly config: IntegrationConfig,
+    readonly logger: IntegrationLogger,
+  ) {}
   private baseUri = `https://${this.config.domain}/api/`;
   private withBaseUri = (path: string) => `${this.baseUri}${path}`;
   private sessionId = '';
@@ -152,6 +157,25 @@ export class APIClient {
     return this.request(this.withBaseUri(`vcenter/vm/${vmId}`));
   }
 
+  public async getVmGuest(vmId: string): Promise<VsphereGuestInfo | null> {
+    let vmGuestResponse;
+    try {
+      vmGuestResponse = await this.request(
+        this.withBaseUri(`vcenter/vm/${vmId}/guest/identity`),
+      );
+    } catch (err) {
+      // This may be unavailable in earlier versions of vSphere.  This will only
+      // impact the mapped relationships we can/can't create in JupiterOne.  No
+      // steps will fail.
+      this.logger.error(
+        { err },
+        `Unable to query vcenter/vm/${vmId}/guest/identity endpoint.  This is likely due to the version of vSphere being run (available in 7.0U2 and newer versions).`,
+      );
+      vmGuestResponse = null;
+    }
+    return vmGuestResponse;
+  }
+
   /**
    * Iterates each network resource in the provider.
    *
@@ -264,6 +288,9 @@ export class APIClient {
   }
 }
 
-export function createAPIClient(config: IntegrationConfig): APIClient {
-  return new APIClient(config);
+export function createAPIClient(
+  config: IntegrationConfig,
+  logger: IntegrationLogger,
+): APIClient {
+  return new APIClient(config, logger);
 }

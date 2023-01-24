@@ -11,8 +11,9 @@ import { createNamespaceEntity } from './converter';
 export async function fetchNamespaces({
   instance,
   jobState,
+  logger,
 }: IntegrationStepExecutionContext<IntegrationConfig>) {
-  const apiClient = createAPIClient(instance.config);
+  const apiClient = createAPIClient(instance.config, logger);
 
   await apiClient.iterateNamespaces(async (namespace) => {
     await jobState.addEntity(createNamespaceEntity(namespace));
