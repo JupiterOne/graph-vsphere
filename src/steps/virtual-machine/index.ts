@@ -11,11 +11,13 @@ import { createVmEntity } from './converter';
 export async function fetchVms({
   instance,
   jobState,
+  logger,
 }: IntegrationStepExecutionContext<IntegrationConfig>) {
-  const apiClient = createAPIClient(instance.config);
+  const apiClient = createAPIClient(instance.config, logger);
 
   await apiClient.iterateVms(async (vm) => {
-    await jobState.addEntity(createVmEntity(vm));
+    const vmGuest = await apiClient.getVmGuest(vm.vm as string);
+    await jobState.addEntity(createVmEntity(vm, vmGuest));
   });
 }
 

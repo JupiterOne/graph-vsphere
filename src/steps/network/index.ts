@@ -13,8 +13,9 @@ import { createNetworkEntity, getNetworkKey } from './converter';
 export async function fetchNetworks({
   instance,
   jobState,
+  logger,
 }: IntegrationStepExecutionContext<IntegrationConfig>) {
-  const apiClient = createAPIClient(instance.config);
+  const apiClient = createAPIClient(instance.config, logger);
 
   await apiClient.iterateNetworks(async (network) => {
     await jobState.addEntity(createNetworkEntity(network));
@@ -24,8 +25,9 @@ export async function fetchNetworks({
 export async function buildVmNetworkRelationship({
   instance,
   jobState,
+  logger,
 }: IntegrationStepExecutionContext<IntegrationConfig>) {
-  const apiClient = createAPIClient(instance.config);
+  const apiClient = createAPIClient(instance.config, logger);
 
   await jobState.iterateEntities(
     { _type: Entities.VIRTUAL_MACHINE._type },

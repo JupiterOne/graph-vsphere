@@ -11,8 +11,9 @@ import { createDatastoreEntity } from './converter';
 export async function fetchDatastores({
   instance,
   jobState,
+  logger,
 }: IntegrationStepExecutionContext<IntegrationConfig>) {
-  const apiClient = createAPIClient(instance.config);
+  const apiClient = createAPIClient(instance.config, logger);
 
   await apiClient.iterateDatastores(async (datastore) => {
     await jobState.addEntity(createDatastoreEntity(datastore));

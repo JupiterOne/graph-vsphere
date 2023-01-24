@@ -91,6 +91,33 @@ export type VsphereVmDetails = {
   };
 };
 
+export type VsphereGuestInfo = {
+  family: string;
+  full_name: {
+    args: [string];
+    default_message: string;
+    id: string;
+    localized: string;
+    params: {
+      key: {
+        d: number;
+        dt: string;
+        format: string;
+        i: number;
+        l: {
+          id: string;
+          params: object;
+        };
+        precision: number;
+        s: string;
+      };
+    };
+  };
+  host_name: string;
+  ip_address: string;
+  name: string;
+};
+
 export type VsphereVmNics = {
   [key: string]: {
     start_connected: boolean;

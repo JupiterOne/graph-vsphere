@@ -11,8 +11,9 @@ import { createHostEntity } from './converter';
 export async function fetchHosts({
   instance,
   jobState,
+  logger,
 }: IntegrationStepExecutionContext<IntegrationConfig>) {
-  const apiClient = createAPIClient(instance.config);
+  const apiClient = createAPIClient(instance.config, logger);
 
   await apiClient.iterateHosts(async (host) => {
     await jobState.addEntity(createHostEntity(host));

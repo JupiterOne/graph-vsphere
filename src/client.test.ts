@@ -1,7 +1,13 @@
 jest.setTimeout(500000);
+import { createMockIntegrationLogger } from '@jupiterone/integration-sdk-testing';
 import { integrationConfig } from '../test/config';
 import { Recording, setupProjectRecording } from '../test/recording';
 import { createAPIClient } from './client';
+
+const apiClient = createAPIClient(
+  integrationConfig,
+  createMockIntegrationLogger(),
+);
 
 // See test/README.md for details
 let recording: Recording;
@@ -15,7 +21,6 @@ test('iterate-vms', async () => {
     name: 'iterate-vms',
   });
 
-  const apiClient = createAPIClient(integrationConfig);
   await apiClient.iterateVms(() => {
     return Promise.resolve();
   });
@@ -27,11 +32,24 @@ test('get-vm', async () => {
     name: 'get-vm',
   });
 
-  const apiClient = createAPIClient(integrationConfig);
-  const ids = ['vm-20', 'vm-21', 'vm-22', 'vm-23', 'vm-24', 'vm-25'];
+  // TODO (adam-in-ict) is there a better way than hardcoding these?
+  const ids = ['vm-22', 'vm-23', 'vm-43', 'vm-44'];
 
   for (const id of ids) {
     await apiClient.getVm(id);
+  }
+});
+
+test('get-vm-guest', async () => {
+  recording = setupProjectRecording({
+    directory: __dirname,
+    name: 'get-vm-guest',
+  });
+
+  const ids = ['vm-22', 'vm-23', 'vm-43', 'vm-44'];
+
+  for (const id of ids) {
+    await apiClient.getVmGuest(id);
   }
 });
 
@@ -41,7 +59,6 @@ test('iterate-hosts', async () => {
     name: 'iterate-hosts',
   });
 
-  const apiClient = createAPIClient(integrationConfig);
   await apiClient.iterateHosts(() => {
     return Promise.resolve();
   });
@@ -53,7 +70,6 @@ test('iterate-networks', async () => {
     name: 'iterate-networks',
   });
 
-  const apiClient = createAPIClient(integrationConfig);
   await apiClient.iterateNetworks(() => {
     return Promise.resolve();
   });
@@ -65,7 +81,6 @@ test('iterate-datastores', async () => {
     name: 'iterate-datastores',
   });
 
-  const apiClient = createAPIClient(integrationConfig);
   await apiClient.iterateDatastores(() => {
     return Promise.resolve();
   });
@@ -77,7 +92,6 @@ test('get-datastore', async () => {
     name: 'get-datastore',
   });
 
-  const apiClient = createAPIClient(integrationConfig);
   const ids = ['datastore-17', 'datastore-48'];
 
   for (const id of ids) {
@@ -91,7 +105,6 @@ test('iterate-datacenter', async () => {
     name: 'iterate-datacenter',
   });
 
-  const apiClient = createAPIClient(integrationConfig);
   await apiClient.iterateDatacenters(() => {
     return Promise.resolve();
   });
@@ -103,7 +116,6 @@ test('get-datacenter', async () => {
     name: 'get-datacenter',
   });
 
-  const apiClient = createAPIClient(integrationConfig);
   const ids = ['datacenter-3'];
 
   for (const id of ids) {
@@ -117,7 +129,6 @@ test('iterate-cluster', async () => {
     name: 'iterate-cluster',
   });
 
-  const apiClient = createAPIClient(integrationConfig);
   await apiClient.iterateClusters(() => {
     return Promise.resolve();
   });
@@ -129,7 +140,6 @@ test('get-cluster', async () => {
     name: 'get-cluster',
   });
 
-  const apiClient = createAPIClient(integrationConfig);
   const ids = ['domain-c43'];
 
   for (const id of ids) {
@@ -143,7 +153,6 @@ test('iterate-namespace', async () => {
     name: 'iterate-namespace',
   });
 
-  const apiClient = createAPIClient(integrationConfig);
   await apiClient.iterateNamespaces(() => {
     return Promise.resolve();
   });
@@ -155,7 +164,6 @@ test('iterate-distributed-switch', async () => {
     name: 'iterate-distributed-switch',
   });
 
-  const apiClient = createAPIClient(integrationConfig);
   // TEMP: clusterId provided for recording
   await apiClient.iterateDistributedSwitches('domain-c43', () => {
     return Promise.resolve();
@@ -181,7 +189,7 @@ test('auth-failure', async () => {
     user: 'invalidUser',
     password: 'invalidpass',
   };
-  const apiClient = createAPIClient(config);
+  const apiClient = createAPIClient(config, createMockIntegrationLogger());
   try {
     await apiClient.iterateVms(() => {
       return Promise.resolve();
@@ -204,7 +212,6 @@ test('invalid-cluster-query-distributed-switches', async () => {
       },
     },
   });
-  const apiClient = createAPIClient(integrationConfig);
   try {
     // TEMP: invalid clusterId provided for recording
     await apiClient.iterateDistributedSwitches('invalid', () => {
