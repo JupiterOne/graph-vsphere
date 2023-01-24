@@ -12,7 +12,7 @@ export function setupProjectRecording(
 ): Recording {
   return setupRecording({
     redactedRequestHeaders: ['Authorization', 'vmware-api-session-id'],
-    redactedResponseHeaders: ['set-cookie'],
+    redactedResponseHeaders: ['set-cookie', 'vmware-api-session-id'],
     options: {
       matchRequestsBy: {
         url: {
@@ -27,19 +27,7 @@ export function setupProjectRecording(
   });
 }
 
-function getRedactedSessionResponse() {
-  return {
-    text: '[REDACTED]',
-    expires_in: 9999,
-    token_type: 'Bearer',
-  };
-}
-
 function redact(entry): void {
-  if (entry.request.postData) {
-    entry.request.postData.text = '[REDACTED]';
-  }
-
   if (!entry.response.content.text) {
     return;
   }
@@ -47,10 +35,9 @@ function redact(entry): void {
   //let's unzip the entry so we can modify it
   mutations.unzipGzippedRecordingEntry(entry);
 
-  //we can just get rid of all response content if this was the token call
   const requestUrl = entry.request.url;
   if (requestUrl.match(/api\/session/)) {
-    entry.response.content.text = JSON.stringify(getRedactedSessionResponse());
+    entry.response.content.text = '"REDACTED"';
     return;
   }
 }

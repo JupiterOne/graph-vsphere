@@ -92,7 +92,7 @@ test('get-datastore', async () => {
     name: 'get-datastore',
   });
 
-  const ids = ['datastore-17', 'datastore-48'];
+  const ids = ['datastore-17', 'datastore-40'];
 
   for (const id of ids) {
     await apiClient.getDatastore(id);
@@ -140,7 +140,7 @@ test('get-cluster', async () => {
     name: 'get-cluster',
   });
 
-  const ids = ['domain-c43'];
+  const ids = ['domain-c35'];
 
   for (const id of ids) {
     await apiClient.getCluster(id);
@@ -165,7 +165,7 @@ test('iterate-distributed-switch', async () => {
   });
 
   // TEMP: clusterId provided for recording
-  await apiClient.iterateDistributedSwitches('domain-c43', () => {
+  await apiClient.iterateDistributedSwitches('domain-c35', () => {
     return Promise.resolve();
   });
 });
