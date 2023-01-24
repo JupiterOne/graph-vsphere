@@ -8,6 +8,13 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 1.3.0 - 2023-01-24
+
+### Changed
+
+- Values for hostname and IP address are now included for vsphere_vm entities
+  when available.
+
 ## 1.2.0 - 2023-01-11
 
 ### Changed
