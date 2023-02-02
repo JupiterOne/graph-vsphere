@@ -3,7 +3,7 @@ import {
   IntegrationStepExecutionContext,
 } from '@jupiterone/integration-sdk-core';
 
-import { createAPIClient } from '../../client';
+import { getOrCreateAPIClient } from '../../client';
 import { IntegrationConfig } from '../../config';
 import { Steps, Entities } from '../constants';
 import { createHostEntity } from './converter';
@@ -13,7 +13,7 @@ export async function fetchHosts({
   jobState,
   logger,
 }: IntegrationStepExecutionContext<IntegrationConfig>) {
-  const apiClient = createAPIClient(instance.config, logger);
+  const apiClient = getOrCreateAPIClient(instance.config, logger);
 
   await apiClient.iterateHosts(async (host) => {
     await jobState.addEntity(createHostEntity(host));

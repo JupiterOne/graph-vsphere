@@ -3,7 +3,7 @@ import {
   IntegrationStepExecutionContext,
 } from '@jupiterone/integration-sdk-core';
 
-import { createAPIClient } from '../../client';
+import { getOrCreateAPIClient } from '../../client';
 import { IntegrationConfig } from '../../config';
 import { Steps, Entities } from '../constants';
 import { createClusterEntity } from './converter';
@@ -13,7 +13,7 @@ export async function fetchClusters({
   jobState,
   logger,
 }: IntegrationStepExecutionContext<IntegrationConfig>) {
-  const apiClient = createAPIClient(instance.config, logger);
+  const apiClient = getOrCreateAPIClient(instance.config, logger);
 
   await apiClient.iterateClusters(async (cluster) => {
     await jobState.addEntity(createClusterEntity(cluster));

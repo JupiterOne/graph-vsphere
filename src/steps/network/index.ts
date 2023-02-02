@@ -5,7 +5,7 @@ import {
   RelationshipClass,
 } from '@jupiterone/integration-sdk-core';
 
-import { createAPIClient } from '../../client';
+import { getOrCreateAPIClient } from '../../client';
 import { IntegrationConfig } from '../../config';
 import { Steps, Entities, Relationships } from '../constants';
 import { createNetworkEntity, getNetworkKey } from './converter';
@@ -15,7 +15,7 @@ export async function fetchNetworks({
   jobState,
   logger,
 }: IntegrationStepExecutionContext<IntegrationConfig>) {
-  const apiClient = createAPIClient(instance.config, logger);
+  const apiClient = getOrCreateAPIClient(instance.config, logger);
 
   await apiClient.iterateNetworks(async (network) => {
     await jobState.addEntity(createNetworkEntity(network));
@@ -27,7 +27,7 @@ export async function buildVmNetworkRelationship({
   jobState,
   logger,
 }: IntegrationStepExecutionContext<IntegrationConfig>) {
-  const apiClient = createAPIClient(instance.config, logger);
+  const apiClient = getOrCreateAPIClient(instance.config, logger);
 
   await jobState.iterateEntities(
     { _type: Entities.VIRTUAL_MACHINE._type },

@@ -2,9 +2,9 @@ jest.setTimeout(500000);
 import { createMockIntegrationLogger } from '@jupiterone/integration-sdk-testing';
 import { integrationConfig } from '../test/config';
 import { Recording, setupProjectRecording } from '../test/recording';
-import { createAPIClient } from './client';
+import { getOrCreateAPIClient } from './client';
 
-const apiClient = createAPIClient(
+const apiClient = getOrCreateAPIClient(
   integrationConfig,
   createMockIntegrationLogger(),
 );
@@ -13,6 +13,22 @@ const apiClient = createAPIClient(
 let recording: Recording;
 afterEach(async () => {
   await recording.stop();
+});
+
+test('check-version', async () => {
+  recording = setupProjectRecording({
+    directory: __dirname,
+    name: 'check-version',
+  });
+
+  const version = await apiClient.getVersion();
+  // We want this to work for the latest version, so planning to
+  // update this as needed with future releases.
+  expect(version).toEqual({
+    major: 8,
+    minor: 0,
+    patch: 0,
+  });
 });
 
 test('iterate-vms', async () => {
@@ -189,7 +205,7 @@ test('auth-failure', async () => {
     user: 'invalidUser',
     password: 'invalidpass',
   };
-  const apiClient = createAPIClient(config, createMockIntegrationLogger());
+  const apiClient = getOrCreateAPIClient(config, createMockIntegrationLogger());
   try {
     await apiClient.iterateVms(() => {
       return Promise.resolve();

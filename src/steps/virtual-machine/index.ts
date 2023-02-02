@@ -3,7 +3,7 @@ import {
   IntegrationStepExecutionContext,
 } from '@jupiterone/integration-sdk-core';
 
-import { createAPIClient } from '../../client';
+import { getOrCreateAPIClient } from '../../client';
 import { IntegrationConfig } from '../../config';
 import { Steps, Entities } from '../constants';
 import { createVmEntity } from './converter';
@@ -13,7 +13,7 @@ export async function fetchVms({
   jobState,
   logger,
 }: IntegrationStepExecutionContext<IntegrationConfig>) {
-  const apiClient = createAPIClient(instance.config, logger);
+  const apiClient = getOrCreateAPIClient(instance.config, logger);
 
   await apiClient.iterateVms(async (vm) => {
     const vmGuest = await apiClient.getVmGuest(vm.vm as string);
