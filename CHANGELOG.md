@@ -8,6 +8,14 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 1.4.0 - 2023-02-02
+
+### Changed
+
+- The vSphere client is now initialized as a singleton.
+- An API version query is now a required step of initialization to be able to
+  better support multiple releases of vSphere.
+
 ## 1.3.0 - 2023-01-24
 
 ### Changed
