@@ -133,6 +133,7 @@ export class APIClient {
     const uri = this.withBaseUri('vcenter/vm');
     try {
       await this.request(uri);
+      await this.getVersion();
     } catch (err) {
       throw new IntegrationProviderAuthenticationError({
         cause: err,
@@ -145,29 +146,17 @@ export class APIClient {
 
   public async getVersion(): Promise<APIVersion> {
     if (this.apiVersion.major == 0) {
-      try {
-        const versionResponse: VsphereVersion = await this.request(
-          this.versionEndpoint,
-        );
-        const versionArray = versionResponse.value.version.split('.');
-        this.apiVersion.major = Number(versionArray[0]);
-        this.apiVersion.minor = Number(versionArray[1]);
-        this.apiVersion.patch = Number(versionArray[2]);
-      } catch (err) {
-        this.logger.warn(
-          { err },
-          `Unable to determine API version.  Defaulting to 8.0.0`,
-        );
-        this.apiVersion = {
-          major: 8,
-          minor: 0,
-          patch: 0,
-        };
-      }
+      const versionResponse: VsphereVersion = await this.request(
+        this.versionEndpoint,
+      );
+      const versionArray = versionResponse.value.version.split('.');
+      this.apiVersion.major = Number(versionArray[0]);
+      this.apiVersion.minor = Number(versionArray[1]);
+      this.apiVersion.patch = Number(versionArray[2]);
     }
     this.logger.info(
       { apiVersion: this.apiVersion },
-      `vSphere API version calculated}`,
+      `vSphere API version calculated`,
     );
     return this.apiVersion;
   }

@@ -75,5 +75,4 @@ export async function validateInvocation(
 
   const apiClient = getOrCreateAPIClient(config, context.logger);
   await apiClient.verifyAuthentication();
-  await apiClient.getVersion();
 }
