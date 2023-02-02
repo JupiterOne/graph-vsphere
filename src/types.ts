@@ -208,3 +208,15 @@ export type VsphereDistributedSwitch = {
   distributed_switch: string;
   network_provider: string;
 };
+
+export type VsphereVersion = {
+  value: {
+    summary: string;
+    install_time: string;
+    product: string;
+    build: string;
+    releasedate: string;
+    type: string;
+    version: string;
+  };
+};

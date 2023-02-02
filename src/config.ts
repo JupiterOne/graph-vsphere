@@ -4,7 +4,7 @@ import {
   IntegrationInstanceConfigFieldMap,
   IntegrationInstanceConfig,
 } from '@jupiterone/integration-sdk-core';
-import { createAPIClient } from './client';
+import { getOrCreateAPIClient } from './client';
 
 export const instanceConfigFields: IntegrationInstanceConfigFieldMap = {
   domain: {
@@ -73,6 +73,6 @@ export async function validateInvocation(
     });
   }
 
-  const apiClient = createAPIClient(config, context.logger);
+  const apiClient = getOrCreateAPIClient(config, context.logger);
   await apiClient.verifyAuthentication();
 }

@@ -6,7 +6,7 @@ import {
   RelationshipClass,
 } from '@jupiterone/integration-sdk-core';
 
-import { createAPIClient } from '../../client';
+import { getOrCreateAPIClient } from '../../client';
 import { IntegrationConfig } from '../../config';
 import { ACCOUNT_ENTITY_KEY } from '../account';
 import { Steps, Entities, Relationships } from '../constants';
@@ -17,7 +17,7 @@ export async function fetchDatacenters({
   jobState,
   logger,
 }: IntegrationStepExecutionContext<IntegrationConfig>) {
-  const apiClient = createAPIClient(instance.config, logger);
+  const apiClient = getOrCreateAPIClient(instance.config, logger);
   const accountEntity = (await jobState.getData(ACCOUNT_ENTITY_KEY)) as Entity;
 
   await apiClient.iterateDatacenters(async (dataCenter) => {

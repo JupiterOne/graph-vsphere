@@ -19,17 +19,35 @@ import {
   VsphereHost,
   VsphereNamespace,
   VsphereNetwork,
+  VsphereVersion,
   VsphereVm,
   VsphereVmDetails,
 } from './types';
 
+let client: APIClient;
+
 export type ResourceIteratee<T> = (each: T) => Promise<void> | void;
+
+export type APIVersion = {
+  major: number;
+  minor: number;
+  patch: number;
+};
+
+// Documentation for API endpoints:
+// https://developer.vmware.com/apis/vsphere-automation/v7.0.0/vcenter/vcenter/
 
 export class APIClient {
   constructor(
     readonly config: IntegrationConfig,
     readonly logger: IntegrationLogger,
   ) {}
+  private apiVersion: APIVersion = {
+    major: 0,
+    minor: 0,
+    patch: 0,
+  };
+  private versionEndpoint = `https://${this.config.domain}/rest/appliance/system/version/`;
   private baseUri = `https://${this.config.domain}/api/`;
   private withBaseUri = (path: string) => `${this.baseUri}${path}`;
   private sessionId = '';
@@ -115,6 +133,7 @@ export class APIClient {
     const uri = this.withBaseUri('vcenter/vm');
     try {
       await this.request(uri);
+      await this.getVersion();
     } catch (err) {
       throw new IntegrationProviderAuthenticationError({
         cause: err,
@@ -123,6 +142,23 @@ export class APIClient {
         statusText: err.statusText,
       });
     }
+  }
+
+  public async getVersion(): Promise<APIVersion> {
+    if (this.apiVersion.major == 0) {
+      const versionResponse: VsphereVersion = await this.request(
+        this.versionEndpoint,
+      );
+      const versionArray = versionResponse.value.version.split('.');
+      this.apiVersion.major = Number(versionArray[0]);
+      this.apiVersion.minor = Number(versionArray[1]);
+      this.apiVersion.patch = Number(versionArray[2]);
+    }
+    this.logger.info(
+      { apiVersion: this.apiVersion },
+      `vSphere API version calculated`,
+    );
+    return this.apiVersion;
   }
 
   /**
@@ -159,17 +195,17 @@ export class APIClient {
 
   public async getVmGuest(vmId: string): Promise<VsphereGuestInfo | null> {
     let vmGuestResponse;
-    try {
+    // No need to check the minor version in this instance, as VMware didn't release any minor revisions for version 7.
+    if (
+      this.apiVersion.major >= 8 ||
+      (this.apiVersion.major >= 7 && this.apiVersion.patch >= 2)
+    ) {
       vmGuestResponse = await this.request(
         this.withBaseUri(`vcenter/vm/${vmId}/guest/identity`),
       );
-    } catch (err) {
-      // This may be unavailable in earlier versions of vSphere.  This will only
-      // impact the mapped relationships we can/can't create in JupiterOne.  No
-      // steps will fail.
-      this.logger.error(
-        { err },
-        `Unable to query vcenter/vm/${vmId}/guest/identity endpoint.  This is likely due to the version of vSphere being run (available in 7.0U2 and newer versions).`,
+    } else {
+      this.logger.info(
+        `Skipping query of vcenter/vm/${vmId}/guest/identity endpoint.  This is only available in versions 7.0U2 (7.0.2) and newer.`,
       );
       vmGuestResponse = null;
     }
@@ -288,9 +324,12 @@ export class APIClient {
   }
 }
 
-export function createAPIClient(
+export function getOrCreateAPIClient(
   config: IntegrationConfig,
   logger: IntegrationLogger,
 ): APIClient {
-  return new APIClient(config, logger);
+  if (!client) {
+    client = new APIClient(config, logger);
+  }
+  return client;
 }
