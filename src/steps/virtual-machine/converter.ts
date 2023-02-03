@@ -3,12 +3,16 @@ import {
   Entity,
 } from '@jupiterone/integration-sdk-core';
 
-import { VsphereGuestInfo, VsphereVm } from '../../types';
+import {
+  VsphereGuestInfo,
+  VsphereGuestInfoDeprecated,
+  VsphereVm,
+} from '../../types';
 import { Entities } from '../constants';
 
 export function createVmEntity(
   vm: VsphereVm,
-  vmGuest: VsphereGuestInfo | null,
+  vmGuest: VsphereGuestInfo | VsphereGuestInfoDeprecated | null,
 ): Entity {
   return createIntegrationEntity({
     entityData: {

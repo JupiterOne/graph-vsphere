@@ -16,6 +16,7 @@ import {
   VsphereDatastoreDetails,
   VsphereDistributedSwitch,
   VsphereGuestInfo,
+  VsphereGuestInfoDeprecated,
   VsphereHost,
   VsphereNamespace,
   VsphereNetwork,
@@ -193,7 +194,9 @@ export class APIClient {
     return this.request(this.withBaseUri(`vcenter/vm/${vmId}`));
   }
 
-  public async getVmGuest(vmId: string): Promise<VsphereGuestInfo | null> {
+  public async getVmGuest(
+    vmId: string,
+  ): Promise<VsphereGuestInfo | VsphereGuestInfoDeprecated | null> {
     let vmGuestResponse;
     // No need to check the minor version in this instance, as VMware didn't release any minor revisions for version 7.
     if (
@@ -203,9 +206,15 @@ export class APIClient {
       vmGuestResponse = await this.request(
         this.withBaseUri(`vcenter/vm/${vmId}/guest/identity`),
       );
+    } else if (this.apiVersion.major >= 6 && this.apiVersion.minor >= 7) {
+      // There is a deprecated version available from versions 6.7 to 7.0.2.
+      const vmGuestResponseDeprecated = await this.request(
+        `https://${this.config.domain}/rest/vcenter/vm/{vm}/guest/identity`,
+      );
+      vmGuestResponse = vmGuestResponseDeprecated.value;
     } else {
       this.logger.info(
-        `Skipping query of vcenter/vm/${vmId}/guest/identity endpoint.  This is only available in versions 7.0U2 (7.0.2) and newer.`,
+        `Skipping query of vcenter/vm/${vmId}/guest/identity endpoint.  This is only available in versions 6.7 and newer.`,
       );
       vmGuestResponse = null;
     }

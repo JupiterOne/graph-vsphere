@@ -118,6 +118,39 @@ export type VsphereGuestInfo = {
   name: string;
 };
 
+// This deprecated form is technically wrapped in a value: {} object, but
+// we have a better time of supporting it if we define the type as not having
+// that and manually fix it in the client.
+export type VsphereGuestInfoDeprecated = {
+  family: string;
+  full_name: {
+    args: [string];
+    default_message: string;
+    id: string;
+    localized: string;
+    params: [
+      {
+        key: string;
+        value: {
+          d: number;
+          dt: string;
+          format: string;
+          i: number;
+          l: {
+            id: string;
+            params: string;
+          };
+          precision: number;
+          s: string;
+        };
+      },
+    ];
+  };
+  host_name: string;
+  ip_address: string;
+  name: string;
+};
+
 export type VsphereVmNics = {
   [key: string]: {
     start_connected: boolean;
