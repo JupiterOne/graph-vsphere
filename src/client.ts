@@ -207,10 +207,12 @@ export class APIClient {
         this.withBaseUri(`vcenter/vm/${vmId}/guest/identity`),
       );
     } else if (this.apiVersion.major >= 6 && this.apiVersion.minor >= 7) {
-      // There is a deprecated version available from versions 6.7 to 7.0.2.
+      // There is a deprecated version available from versions 6.7 to 7.0.1.
       const vmGuestResponseDeprecated = await this.request(
         `https://${this.config.domain}/rest/vcenter/vm/{vm}/guest/identity`,
       );
+      // Set the response to the value object instead of the entire response to allow
+      // the VsphereGuestInfoDeprecated to look more like the VsphereGuestInfo type.
       vmGuestResponse = vmGuestResponseDeprecated.value;
     } else {
       this.logger.info(
