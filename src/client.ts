@@ -23,6 +23,7 @@ import {
   VsphereVersion,
   VsphereVm,
   VsphereVmDetails,
+  VsphereVmDetailsDeprecated,
 } from './types';
 
 let client: APIClient;
@@ -50,8 +51,21 @@ export class APIClient {
   };
   private versionEndpoint = `https://${this.config.domain}/rest/appliance/system/version/`;
   private baseUri = `https://${this.config.domain}/api/`;
+  private baseUriDeprecated = `https://${this.config.domain}/api/`;
   private withBaseUri = (path: string) => `${this.baseUri}${path}`;
   private sessionId = '';
+
+  // Add ability to switch Base URI dependent on the version for endpoints
+  // that are supported before version 7.0.2 but in a different format.
+  private withVersionedBaseUri = async (path: string) => {
+    const version = await this.getVersion();
+    // No need to check the minor version in this instance, as VMware didn't release any minor revisions for version 7.
+    if (version.major >= 8 || (version.major >= 7 && version.patch >= 2)) {
+      return `${this.baseUri}${path}`;
+    } else {
+      return `${this.baseUriDeprecated}${path}`;
+    }
+  };
 
   private checkStatus = (response: Response) => {
     if (response.ok) {
@@ -104,6 +118,21 @@ export class APIClient {
     }
   }
 
+  // Versions before 7.0.2 wrapped their results in a "value" object
+  private async versionedRequest(
+    uri: string,
+    method: 'GET' | 'HEAD' = 'GET',
+  ): Promise<Response> {
+    const version = await this.getVersion();
+    // No need to check the minor version in this instance, as VMware didn't release any minor revisions for version 7.
+    if (version.major >= 8 || (version.major >= 7 && version.patch >= 2)) {
+      return await this.request(uri, method);
+    } else {
+      const result = await this.request(uri, method);
+      return result.value;
+    }
+  }
+
   private async getSessionId(): Promise<string> {
     const uri = this.withBaseUri('session');
     if (!this.sessionId) {
@@ -131,9 +160,9 @@ export class APIClient {
   }
 
   public async verifyAuthentication(): Promise<void> {
-    const uri = this.withBaseUri('vcenter/vm');
+    const uri = await this.withVersionedBaseUri('vcenter/vm');
     try {
-      await this.request(uri);
+      await this.versionedRequest(uri);
       await this.getVersion();
     } catch (err) {
       throw new IntegrationProviderAuthenticationError({
@@ -154,11 +183,12 @@ export class APIClient {
       this.apiVersion.major = Number(versionArray[0]);
       this.apiVersion.minor = Number(versionArray[1]);
       this.apiVersion.patch = Number(versionArray[2]);
+
+      this.logger.info(
+        { apiVersion: this.apiVersion },
+        `vSphere API version calculated`,
+      );
     }
-    this.logger.info(
-      { apiVersion: this.apiVersion },
-      `vSphere API version calculated`,
-    );
     return this.apiVersion;
   }
 
@@ -170,7 +200,9 @@ export class APIClient {
   public async iterateHosts(
     iteratee: ResourceIteratee<VsphereHost>,
   ): Promise<void> {
-    const hosts = await this.request(this.withBaseUri('vcenter/host'));
+    const hosts = await this.versionedRequest(
+      await this.withVersionedBaseUri('vcenter/host'),
+    );
     for (const host of hosts) {
       await iteratee(host);
     }
@@ -184,36 +216,34 @@ export class APIClient {
   public async iterateVms(
     iteratee: ResourceIteratee<VsphereVm>,
   ): Promise<void> {
-    const vms = await this.request(this.withBaseUri('vcenter/vm'));
+    const vms = await this.versionedRequest(
+      await this.withVersionedBaseUri('vcenter/vm'),
+    );
     for (const vm of vms) {
       await iteratee(vm);
     }
   }
 
-  public async getVm(vmId: string): Promise<VsphereVmDetails> {
-    return this.request(this.withBaseUri(`vcenter/vm/${vmId}`));
+  public async getVm(
+    vmId: string,
+  ): Promise<VsphereVmDetails | VsphereVmDetailsDeprecated> {
+    return this.versionedRequest(
+      await this.withVersionedBaseUri(`vcenter/vm/${vmId}`),
+    );
   }
 
   public async getVmGuest(
     vmId: string,
   ): Promise<VsphereGuestInfo | VsphereGuestInfoDeprecated | null> {
     let vmGuestResponse;
-    // No need to check the minor version in this instance, as VMware didn't release any minor revisions for version 7.
-    if (
-      this.apiVersion.major >= 8 ||
-      (this.apiVersion.major >= 7 && this.apiVersion.patch >= 2)
-    ) {
-      vmGuestResponse = await this.request(
-        this.withBaseUri(`vcenter/vm/${vmId}/guest/identity`),
+    const version = await this.getVersion();
+
+    // Only perform a versioned request if we are at 6.7 or newer.  This
+    // endpoint is not supported in versions before that.
+    if (version.major >= 7 || (version.major >= 6 && version.minor >= 7)) {
+      vmGuestResponse = await this.versionedRequest(
+        await this.withVersionedBaseUri(`vcenter/vm/${vmId}/guest/identity`),
       );
-    } else if (this.apiVersion.major >= 6 && this.apiVersion.minor >= 7) {
-      // There is a deprecated version available from versions 6.7 to 7.0.1.
-      const vmGuestResponseDeprecated = await this.request(
-        `https://${this.config.domain}/rest/vcenter/vm/{vm}/guest/identity`,
-      );
-      // Set the response to the value object instead of the entire response to allow
-      // the VsphereGuestInfoDeprecated to look more like the VsphereGuestInfo type.
-      vmGuestResponse = vmGuestResponseDeprecated.value;
     } else {
       this.logger.info(
         `Skipping query of vcenter/vm/${vmId}/guest/identity endpoint.  This is only available in versions 6.7 and newer.`,
@@ -231,7 +261,9 @@ export class APIClient {
   public async iterateNetworks(
     iteratee: ResourceIteratee<VsphereNetwork>,
   ): Promise<void> {
-    const networks = await this.request(this.withBaseUri('vcenter/network'));
+    const networks = await this.versionedRequest(
+      await this.withVersionedBaseUri('vcenter/network'),
+    );
     for (const network of networks) {
       await iteratee(network);
     }
@@ -245,8 +277,8 @@ export class APIClient {
   public async iterateDatastores(
     iteratee: ResourceIteratee<VsphereDatastore>,
   ): Promise<void> {
-    const datastores = await this.request(
-      this.withBaseUri('vcenter/datastore'),
+    const datastores = await this.versionedRequest(
+      await this.withVersionedBaseUri('vcenter/datastore'),
     );
     for (const datastore of datastores) {
       await iteratee(datastore);
@@ -256,7 +288,9 @@ export class APIClient {
   public async getDatastore(
     datastoreId: string,
   ): Promise<VsphereDatastoreDetails> {
-    return this.request(this.withBaseUri(`vcenter/datastore/${datastoreId}`));
+    return this.versionedRequest(
+      await this.withVersionedBaseUri(`vcenter/datastore/${datastoreId}`),
+    );
   }
 
   /**
@@ -267,8 +301,8 @@ export class APIClient {
   public async iterateDatacenters(
     iteratee: ResourceIteratee<VsphereDatacenter>,
   ): Promise<void> {
-    const datacenters = await this.request(
-      this.withBaseUri('vcenter/datacenter'),
+    const datacenters = await this.versionedRequest(
+      await this.withVersionedBaseUri('vcenter/datacenter'),
     );
     for (const datacenter of datacenters) {
       await iteratee(datacenter);
@@ -278,7 +312,9 @@ export class APIClient {
   public async getDatacenter(
     datacenterId: string,
   ): Promise<VsphereDatacenterDetails> {
-    return this.request(this.withBaseUri(`vcenter/datacenter/${datacenterId}`));
+    return this.versionedRequest(
+      await this.withVersionedBaseUri(`vcenter/datacenter/${datacenterId}`),
+    );
   }
 
   /**
@@ -289,20 +325,26 @@ export class APIClient {
   public async iterateClusters(
     iteratee: ResourceIteratee<VsphereCluster>,
   ): Promise<void> {
-    const clusters = await this.request(this.withBaseUri('vcenter/cluster'));
+    const clusters = await this.versionedRequest(
+      await this.withVersionedBaseUri('vcenter/cluster'),
+    );
     for (const cluster of clusters) {
       await iteratee(cluster);
     }
   }
 
   public async getCluster(clusterId: string): Promise<VsphereClusterDetails> {
-    return this.request(this.withBaseUri(`vcenter/cluster/${clusterId}`));
+    return this.versionedRequest(
+      await this.withVersionedBaseUri(`vcenter/cluster/${clusterId}`),
+    );
   }
 
   /**
    * Iterates each namespace resource in the provider.
    *
    * @param iteratee receives each namespace to produce entities/relationships
+   *
+   * NOT SUPPORTED IN VERSIONS BEFORE 7.0.2
    */
   public async iterateNamespaces(
     iteratee: ResourceIteratee<VsphereNamespace>,
@@ -319,6 +361,8 @@ export class APIClient {
    * Iterates each distributed switch resource in the provider.
    *
    * @param iteratee receives each distributed switch to produce entities/relationships
+   *
+   * NOT SUPPORTED IN VERSIONS BEFORE 7.0.2
    */
   public async iterateDistributedSwitches(
     clusterId: string,
