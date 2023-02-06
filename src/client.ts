@@ -51,7 +51,7 @@ export class APIClient {
   };
   private versionEndpoint = `https://${this.config.domain}/rest/appliance/system/version/`;
   private baseUri = `https://${this.config.domain}/api/`;
-  private baseUriDeprecated = `https://${this.config.domain}/api/`;
+  private baseUriDeprecated = `https://${this.config.domain}/rest/`;
   private withBaseUri = (path: string) => `${this.baseUri}${path}`;
   private sessionId = '';
 
