@@ -344,7 +344,7 @@ export class APIClient {
    *
    * @param iteratee receives each namespace to produce entities/relationships
    *
-   * NOT SUPPORTED IN VERSIONS BEFORE 7.0.2
+   * NOT SUPPORTED IN VERSIONS BEFORE 7.0.0
    */
   public async iterateNamespaces(
     iteratee: ResourceIteratee<VsphereNamespace>,
@@ -362,7 +362,7 @@ export class APIClient {
    *
    * @param iteratee receives each distributed switch to produce entities/relationships
    *
-   * NOT SUPPORTED IN VERSIONS BEFORE 7.0.2
+   * NOT SUPPORTED IN VERSIONS BEFORE 7.0.0
    */
   public async iterateDistributedSwitches(
     clusterId: string,

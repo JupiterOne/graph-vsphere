@@ -89,37 +89,24 @@ export async function getStepStartStates(
 
   const version: APIVersion = await apiClient.getVersion();
 
-  if (version.major >= 7) {
-    return {
-      [Steps.ACCOUNT]: { disabled: false },
-      [Steps.BUILD_VM_NETWORK]: { disabled: false },
-      [Steps.CLUSTER]: { disabled: false },
-      [Steps.DATASTORE]: { disabled: false },
-      [Steps.DATA_CENTER]: { disabled: false },
-      [Steps.DISTRIBUTED_SWITCH]: { disabled: false },
-      [Steps.HOST]: { disabled: false },
-      [Steps.NAMESPACE]: { disabled: false },
-      [Steps.NETWORK]: { disabled: false },
-      [Steps.VM]: { disabled: false },
-    };
-  } else {
-    return {
-      [Steps.ACCOUNT]: { disabled: false },
-      [Steps.BUILD_VM_NETWORK]: { disabled: false },
-      [Steps.CLUSTER]: { disabled: false },
-      [Steps.DATASTORE]: { disabled: false },
-      [Steps.DATA_CENTER]: { disabled: false },
-      [Steps.DISTRIBUTED_SWITCH]: {
-        disabled: true,
-        disabledReason: DisabledStepReason.CONFIG,
-      },
-      [Steps.HOST]: { disabled: false },
-      [Steps.NAMESPACE]: {
-        disabled: true,
-        disabledReason: DisabledStepReason.CONFIG,
-      },
-      [Steps.NETWORK]: { disabled: false },
-      [Steps.VM]: { disabled: false },
-    };
-  }
+  const supportedVersionCheck: boolean = version.major < 7;
+
+  return {
+    [Steps.ACCOUNT]: { disabled: false },
+    [Steps.BUILD_VM_NETWORK]: { disabled: false },
+    [Steps.CLUSTER]: { disabled: false },
+    [Steps.DATASTORE]: { disabled: false },
+    [Steps.DATA_CENTER]: { disabled: false },
+    [Steps.DISTRIBUTED_SWITCH]: {
+      disabled: supportedVersionCheck,
+      disabledReason: DisabledStepReason.CONFIG,
+    },
+    [Steps.HOST]: { disabled: false },
+    [Steps.NAMESPACE]: {
+      disabled: supportedVersionCheck,
+      disabledReason: DisabledStepReason.CONFIG,
+    },
+    [Steps.NETWORK]: { disabled: false },
+    [Steps.VM]: { disabled: false },
+  };
 }

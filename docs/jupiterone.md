@@ -28,11 +28,11 @@
 
   #### Namespace Ingestion
 
-  - Only supported on versions 7.0.2 and newer
+  - Only supported on versions 7.0.0 and newer
 
   #### Distributed Switch Ingestion
 
-  - Only supported on versions 7.0.2 and newer
+  - Only supported on versions 7.0.0 and newer
 
   #### VM Guest Identity
 
