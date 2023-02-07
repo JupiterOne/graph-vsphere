@@ -3,8 +3,11 @@ import {
   IntegrationValidationError,
   IntegrationInstanceConfigFieldMap,
   IntegrationInstanceConfig,
+  StepStartStates,
+  DisabledStepReason,
 } from '@jupiterone/integration-sdk-core';
-import { getOrCreateAPIClient } from './client';
+import { APIVersion, getOrCreateAPIClient } from './client';
+import { Steps } from './steps/constants';
 
 export const instanceConfigFields: IntegrationInstanceConfigFieldMap = {
   domain: {
@@ -75,4 +78,35 @@ export async function validateInvocation(
 
   const apiClient = getOrCreateAPIClient(config, context.logger);
   await apiClient.verifyAuthentication();
+}
+
+export async function getStepStartStates(
+  executionContext: IntegrationExecutionContext<IntegrationConfig>,
+): Promise<StepStartStates> {
+  // Check for version 7.0.0 or greater and disable two steps if not
+  const { config } = executionContext.instance;
+  const apiClient = getOrCreateAPIClient(config, executionContext.logger);
+
+  const version: APIVersion = await apiClient.getVersion();
+
+  const supportedVersionCheck: boolean = version.major < 7;
+
+  return {
+    [Steps.ACCOUNT]: { disabled: false },
+    [Steps.BUILD_VM_NETWORK]: { disabled: false },
+    [Steps.CLUSTER]: { disabled: false },
+    [Steps.DATASTORE]: { disabled: false },
+    [Steps.DATA_CENTER]: { disabled: false },
+    [Steps.DISTRIBUTED_SWITCH]: {
+      disabled: supportedVersionCheck,
+      disabledReason: DisabledStepReason.CONFIG,
+    },
+    [Steps.HOST]: { disabled: false },
+    [Steps.NAMESPACE]: {
+      disabled: supportedVersionCheck,
+      disabledReason: DisabledStepReason.CONFIG,
+    },
+    [Steps.NETWORK]: { disabled: false },
+    [Steps.VM]: { disabled: false },
+  };
 }

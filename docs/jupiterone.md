@@ -23,6 +23,20 @@
   that the account is provided with global readonly permissions to all inventory
   hierarchies.
 - You must have permission in JupiterOne to install new integrations.
+- This integration currently supports vSphere versions 6.5 - 8.0 with the
+  following steps only available in certain versions:
+
+  #### Namespace Ingestion
+
+  - Only supported on versions 7.0.0 and newer
+
+  #### Distributed Switch Ingestion
+
+  - Only supported on versions 7.0.0 and newer
+
+  #### VM Guest Identity
+
+  - Only supported on versions 6.7.0 and newer
 
 ## Support
 
