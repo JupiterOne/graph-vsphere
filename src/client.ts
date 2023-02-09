@@ -135,6 +135,7 @@ export class APIClient {
 
   private async getSessionId(): Promise<string> {
     const uri = this.withBaseUri('session');
+    const uriDeprecated = `${this.baseUriDeprecated}com/vmware/cis/session`;
     if (!this.sessionId) {
       try {
         const res: Response = await fetch(uri, {
@@ -149,10 +150,30 @@ export class APIClient {
         const sessionId = await res.json();
         this.sessionId = sessionId;
       } catch (err) {
+        this.logger.info(
+          { uri },
+          `Failed to authenticate.  Trying legacy session endpoint...`,
+        );
+      }
+      try {
+        // Next, try deprecated endpoint for backward compatibility
+        const res: Response = await fetch(uriDeprecated, {
+          method: 'POST',
+          headers: {
+            Authorization: `Basic ${Buffer.from(
+              `${this.config.login}:${this.config.password}`,
+            ).toString('base64')}`,
+          },
+        });
+        this.checkStatus(res);
+        const sessionId = await res.json();
+        this.sessionId = sessionId.value;
+        this.logger.info(`SUCCESS`, sessionId);
+      } catch (newerr) {
         throw new IntegrationProviderAPIError({
-          endpoint: uri,
-          status: err.status,
-          statusText: err.statusText,
+          endpoint: uriDeprecated,
+          status: newerr.status,
+          statusText: newerr.statusText,
         });
       }
     }
