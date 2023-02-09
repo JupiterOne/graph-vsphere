@@ -181,10 +181,12 @@ export class APIClient {
   }
 
   public async verifyAuthentication(): Promise<void> {
-    const uri = await this.withVersionedBaseUri('vcenter/vm');
+    let uri: string = '';
     try {
-      await this.versionedRequest(uri);
       await this.getVersion();
+      // We have to wait until we've gotten the initial version before constructing the URI
+      uri = await this.withVersionedBaseUri('vcenter/vm');
+      await this.versionedRequest(uri);
     } catch (err) {
       throw new IntegrationProviderAuthenticationError({
         cause: err,
