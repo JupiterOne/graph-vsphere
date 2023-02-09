@@ -34,6 +34,11 @@ export async function buildVmNetworkRelationship({
     async (vmEntity) => {
       const vm = await apiClient.getVm(vmEntity.vm as string);
       for (const nics of Object.values(vm.nics)) {
+        // Depending on version, we may need to slightly modify where
+        // we're pulling network information from.
+        if (!nics.backing) {
+          nics.backing = nics.value.backing;
+        }
         const networkEntity = await jobState.findEntity(
           getNetworkKey(nics.backing.network),
         );
