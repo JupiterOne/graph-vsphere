@@ -141,14 +141,6 @@ export class APIClient {
     }
   }
 
-  private async generateHostFilter(host: string): Promise<string> {
-    if (await this.version702orNewer()) {
-      return `hosts=${encodeURIComponent(host)}`;
-    } else {
-      return `filter.hosts=${encodeURIComponent(host)}`;
-    }
-  }
-
   private async getSessionId(): Promise<string> {
     const uri = this.withBaseUri('session');
     const uriDeprecated = `${this.baseUriDeprecated}com/vmware/cis/session`;
@@ -242,6 +234,19 @@ export class APIClient {
     );
     for (const host of hosts) {
       await iteratee(host);
+    }
+  }
+
+  /**
+   * Generates a host filter for use by API calls needing filtered due to size constraints
+   *
+   * @param host host to use in the filter
+   */
+  private async generateHostFilter(host: string): Promise<string> {
+    if (await this.version702orNewer()) {
+      return `hosts=${encodeURIComponent(host)}`;
+    } else {
+      return `filter.hosts=${encodeURIComponent(host)}`;
     }
   }
 
