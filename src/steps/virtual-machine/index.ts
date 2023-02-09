@@ -20,21 +20,27 @@ export async function fetchVms({
   let guestQuerySuccessCount: number = 0;
   let vmGuest: VsphereGuestInfo | VsphereGuestInfoDeprecated | null;
 
-  await apiClient.iterateVms(async (vm) => {
-    // Wrap the VM Guest call in a try block, since it may give a 503 error
-    // if we don't have VMware tools enabled on some VMs.
-    try {
-      vmGuest = await apiClient.getVmGuest(vm.vm as string);
-      guestQuerySuccessCount++;
-    } catch (err) {
-      logger.info(
-        `Unable to query vcenter/vm/${vm.vm}/guest/identity endpoint.  This may be due to permissions or having VMware tools turned off on that VM.`,
-      );
-      vmGuest = null;
-      guestQueryFailCount++;
-    }
-    await jobState.addEntity(createVmEntity(vm, vmGuest));
-  });
+  await jobState.iterateEntities(
+    { _type: Entities.HOST._type },
+    async (hostEntity) => {
+      logger.info(`Querying VMs for host `, hostEntity.hostname);
+      await apiClient.iterateVms(async (vm) => {
+        // Wrap the VM Guest call in a try block, since it may give a 503 error
+        // if we don't have VMware tools enabled on some VMs.
+        try {
+          vmGuest = await apiClient.getVmGuest(vm.vm as string);
+          guestQuerySuccessCount++;
+        } catch (err) {
+          logger.info(
+            `Unable to query vcenter/vm/${vm.vm}/guest/identity endpoint.  This may be due to permissions or having VMware tools turned off on that VM.`,
+          );
+          vmGuest = null;
+          guestQueryFailCount++;
+        }
+        await jobState.addEntity(createVmEntity(vm, vmGuest));
+      }, hostEntity.hostname as string);
+    },
+  );
 
   if (guestQueryFailCount > 0) {
     logger.publishWarnEvent({
