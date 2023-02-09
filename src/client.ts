@@ -197,14 +197,14 @@ export class APIClient {
   }
 
   public async verifyAuthentication(): Promise<void> {
-    const uri = await this.withVersionedBaseUri('vcenter/vm');
     try {
-      await this.versionedRequest(uri);
+      // The version check requires authentication and is therefore
+      // sufficient for testing.
       await this.getVersion();
     } catch (err) {
       throw new IntegrationProviderAuthenticationError({
         cause: err,
-        endpoint: uri,
+        endpoint: this.versionEndpoint,
         status: err.status,
         statusText: err.statusText,
       });
