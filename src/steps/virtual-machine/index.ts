@@ -39,7 +39,7 @@ export async function fetchVms({
   if (guestQueryFailCount > 0) {
     logger.publishWarnEvent({
       name: IntegrationWarnEventName.MissingPermission,
-      description: `Could not query all guest information for VMs.  Success = ${guestQuerySuccessCount}  Failed = ${guestQueryFailCount}`,
+      description: `Could not query all guest information for VMs.  This may be due to permissions or having VMware tools turned off on those VMs.  Success = ${guestQuerySuccessCount}  Failed = ${guestQueryFailCount}`,
     });
   }
 }
