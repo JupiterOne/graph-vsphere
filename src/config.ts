@@ -99,12 +99,12 @@ export async function getStepStartStates(
     [Steps.DATA_CENTER]: { disabled: false },
     [Steps.DISTRIBUTED_SWITCH]: {
       disabled: supportedVersionCheck,
-      disabledReason: DisabledStepReason.CONFIG,
+      disabledReason: DisabledStepReason.API_VERSION,
     },
     [Steps.HOST]: { disabled: false },
     [Steps.NAMESPACE]: {
       disabled: supportedVersionCheck,
-      disabledReason: DisabledStepReason.CONFIG,
+      disabledReason: DisabledStepReason.API_VERSION,
     },
     [Steps.NETWORK]: { disabled: false },
     [Steps.VM]: { disabled: false },
