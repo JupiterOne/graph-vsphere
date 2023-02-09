@@ -39,7 +39,7 @@ test('iterate-vms', async () => {
 
   await apiClient.iterateVms(() => {
     return Promise.resolve();
-  });
+  }, 'host-14');
 });
 
 test('get-vm', async () => {
@@ -209,7 +209,7 @@ test('auth-failure', async () => {
   try {
     await apiClient.iterateVms(() => {
       return Promise.resolve();
-    });
+    }, 'host-14');
   } catch {
     return;
   }

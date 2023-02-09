@@ -55,12 +55,22 @@ export class APIClient {
   private withBaseUri = (path: string) => `${this.baseUri}${path}`;
   private sessionId = '';
 
+  private async version702orNewer() {
+    const version = await this.getVersion();
+    return (
+      version.major >= 8 ||
+      (version.major >= 7 && version.minor >= 0 && version.patch >= 2)
+    );
+  }
+  private async version670orNewer() {
+    const version = await this.getVersion();
+    return version.major >= 7 || (version.major >= 6 && version.minor >= 7);
+  }
+
   // Add ability to switch Base URI dependent on the version for endpoints
   // that are supported before version 7.0.2 but in a different format.
   private withVersionedBaseUri = async (path: string) => {
-    const version = await this.getVersion();
-    // No need to check the minor version in this instance, as VMware didn't release any minor revisions for version 7.
-    if (version.major >= 8 || (version.major >= 7 && version.patch >= 2)) {
+    if (await this.version702orNewer()) {
       return `${this.baseUri}${path}`;
     } else {
       return `${this.baseUriDeprecated}${path}`;
@@ -123,13 +133,19 @@ export class APIClient {
     uri: string,
     method: 'GET' | 'HEAD' = 'GET',
   ): Promise<Response> {
-    const version = await this.getVersion();
-    // No need to check the minor version in this instance, as VMware didn't release any minor revisions for version 7.
-    if (version.major >= 8 || (version.major >= 7 && version.patch >= 2)) {
+    if (await this.version702orNewer()) {
       return await this.request(uri, method);
     } else {
       const result = await this.request(uri, method);
       return result.value;
+    }
+  }
+
+  private async generateHostFilter(host: string): Promise<string> {
+    if (await this.version702orNewer()) {
+      return `hosts=${encodeURIComponent(host)}`;
+    } else {
+      return `filter.hosts=${encodeURIComponent(host)}`;
     }
   }
 
@@ -233,12 +249,16 @@ export class APIClient {
    * Iterates each vm resource in the provider.
    *
    * @param iteratee receives each vm to produce entities/relationships
+   * @param host host to filter VMs by.  Large systems will otherwise hit the 4000 VM limit imposed by this endpoint.
    */
   public async iterateVms(
     iteratee: ResourceIteratee<VsphereVm>,
+    host: string,
   ): Promise<void> {
     const vms = await this.versionedRequest(
-      await this.withVersionedBaseUri('vcenter/vm'),
+      await this.withVersionedBaseUri(
+        `vcenter/vm?${await this.generateHostFilter(host)}`,
+      ),
     );
     for (const vm of vms) {
       await iteratee(vm);
@@ -257,11 +277,10 @@ export class APIClient {
     vmId: string,
   ): Promise<VsphereGuestInfo | VsphereGuestInfoDeprecated | null> {
     let vmGuestResponse;
-    const version = await this.getVersion();
 
     // Only perform a versioned request if we are at 6.7 or newer.  This
     // endpoint is not supported in versions before that.
-    if (version.major >= 7 || (version.major >= 6 && version.minor >= 7)) {
+    if (await this.version670orNewer()) {
       vmGuestResponse = await this.versionedRequest(
         await this.withVersionedBaseUri(`vcenter/vm/${vmId}/guest/identity`),
       );
