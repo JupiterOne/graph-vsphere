@@ -8,6 +8,16 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 1.5.0 - 2023-02-14
+
+### Added
+
+- Backwards compatiblity for supported steps now exists back to version 6.5.
+
+### Changed
+
+- VM queries are now done on a host by host basis to reduce API query size.
+
 ## 1.4.0 - 2023-02-02
 
 ### Changed
