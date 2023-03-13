@@ -275,8 +275,8 @@ export class APIClient {
       }
     } catch (err) {
       this.logger.info(
-        { err },
-        `Unable to query VM list for host ${host}. This may be due to an API limitation or other server side errors.`,
+        { err, host },
+        `Unable to query VM list for host. This may be due to an API limitation or other server side errors.`,
       );
       this.logger.publishWarnEvent({
         name: IntegrationWarnEventName.IngestionLimitEncountered,
