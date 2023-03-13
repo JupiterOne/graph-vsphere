@@ -4,6 +4,7 @@ import {
   IntegrationLogger,
   IntegrationProviderAPIError,
   IntegrationProviderAuthenticationError,
+  IntegrationWarnEventName,
 } from '@jupiterone/integration-sdk-core';
 
 import { IntegrationConfig } from './config';
@@ -260,13 +261,27 @@ export class APIClient {
     iteratee: ResourceIteratee<VsphereVm>,
     host: string,
   ): Promise<void> {
-    const vms = await this.versionedRequest(
-      await this.withVersionedBaseUri(
-        `vcenter/vm?${await this.generateHostFilter(host)}`,
-      ),
-    );
-    for (const vm of vms) {
-      await iteratee(vm);
+    // We need to wrap our host search in a try/catch for the time being.  We're getting occasional 500 errors and unable
+    // to tell if it is due to an API limitation or other server side issue.  This will at least allow us to ingest as much
+    // data as possible for the time being.
+    try {
+      const vms = await this.versionedRequest(
+        await this.withVersionedBaseUri(
+          `vcenter/vm?${await this.generateHostFilter(host)}`,
+        ),
+      );
+      for (const vm of vms) {
+        await iteratee(vm);
+      }
+    } catch (err) {
+      this.logger.info(
+        { err },
+        `Unable to query VM list for host ${host}. This may be due to an API limitation or other server side errors.`,
+      );
+      this.logger.publishWarnEvent({
+        name: IntegrationWarnEventName.IngestionLimitEncountered,
+        description: `Unable to query VM list for host ${host}.  This may be due to an API limitation or other server side errors.`,
+      });
     }
   }
 
