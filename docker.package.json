@@ -1,6 +1,6 @@
 {
   "name": "@jupiterone/graph-vsphere",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "description": "A JupiterOne Integration for ingesting data of the VMware vSphere",
   "license": "MPL-2.0",
   "main": "src/index.js",

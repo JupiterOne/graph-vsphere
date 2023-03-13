@@ -8,6 +8,13 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 1.5.1 - 2023-03-13
+
+### Changed
+
+- Queries to list VMs per host are now wrapped in a try catch to avoid one
+  failed host canceling the remainder of the data collection for that step.
+
 ## 1.5.0 - 2023-02-14
 
 ### Added
