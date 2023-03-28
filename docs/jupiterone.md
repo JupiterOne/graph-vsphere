@@ -1,4 +1,4 @@
-# VMware vSphere Integration with JupiterOne
+# VMware vSphere
 
 ## VMware vSphere + JupiterOne Integration Benefits
 
@@ -76,7 +76,7 @@ This can be added as an environment file (e.g `docker.env`) and passed using the
 
 ### In JupiterOne
 
-1. From the configuration **Gear Icon**, select **Integrations**.
+1. From the top navigation of the J1 Search homepage, select **Integrations**.
 2. Scroll to the **VMware vSphere** integration tile and click it.
 3. Click the **Add Configuration** button and configure the following settings:
 
@@ -94,7 +94,7 @@ This can be added as an environment file (e.g `docker.env`) and passed using the
 
 # How to Uninstall
 
-1. From the configuration **Gear Icon**, select **Integrations**.
+1. From the top navigation of the J1 Search homepage, select **Integrations**.
 2. Scroll to the **VMware vSphere** integration tile and click it.
 3. Identify and click the **integration to delete**.
 4. Click the **trash can** icon.
