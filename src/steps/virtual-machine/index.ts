@@ -63,6 +63,12 @@ export async function fetchVms({
       description: `Could not query all guest information for VMs.  This may be due to permissions or having VMware tools turned off on those VMs.  Success = ${guestQuerySuccessCount}  Failed = ${guestQueryFailCount}`,
     });
   }
+  if (detailsQueryFailCount > 0) {
+    logger.publishWarnEvent({
+      name: IntegrationWarnEventName.MissingPermission,
+      description: `Could not query all configuration states for VMs.  This may be due to permissions.  Success = ${detailsQuerySuccessCount}  Failed = ${detailsQueryFailCount}`,
+    });
+  }
 }
 
 export const vmSteps: IntegrationStep<IntegrationConfig>[] = [
