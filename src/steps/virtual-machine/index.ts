@@ -19,7 +19,11 @@ export async function fetchVms({
   let guestQueryFailCount: number = 0;
   let guestQuerySuccessCount: number = 0;
   let vmGuest: VsphereGuestInfo | VsphereGuestInfoDeprecated | null;
-
+  let vmDetails: VsphereVmDetails | VsphereVmDetailsDeprecated | null;
+  let bios_uuid: string;
+  let detailsQueryFailCount: number = 0;
+  let detailsQuerySuccessCount: number = 0;
+  
   await jobState.iterateEntities(
     { _type: Entities.HOST._type },
     async (hostEntity) => {
@@ -37,7 +41,18 @@ export async function fetchVms({
           vmGuest = null;
           guestQueryFailCount++;
         }
-        await jobState.addEntity(createVmEntity(vm, vmGuest));
+        try {
+          vmDetails = await apiClient.getVm(vm.vm as string);
+          bios_uuid = vmDetails.identity?.bios_uuid;
+          detailsQuerySuccessCount++;
+        } catch (err) {
+          logger.info(
+            `Unable to query vcenter/vm/${vm.vm} endpoint.`,
+          );
+          vmDetails = null;
+          detailsQueryFailCount++;
+        }
+        await jobState.addEntity(createVmEntity(vm, vmGuest, bios_uuid));
       }, hostEntity.hostname as string);
     },
   );
@@ -46,6 +61,12 @@ export async function fetchVms({
     logger.publishWarnEvent({
       name: IntegrationWarnEventName.MissingPermission,
       description: `Could not query all guest information for VMs.  This may be due to permissions or having VMware tools turned off on those VMs.  Success = ${guestQuerySuccessCount}  Failed = ${guestQueryFailCount}`,
+    });
+  }
+  if (detailsQueryFailCount > 0) {
+    logger.publishWarnEvent({
+      name: IntegrationWarnEventName.MissingPermission,
+      description: `Could not query all configuration states for VMs.  This may be due to permissions.  Success = ${detailsQuerySuccessCount}  Failed = ${detailsQueryFailCount}`,
     });
   }
 }
