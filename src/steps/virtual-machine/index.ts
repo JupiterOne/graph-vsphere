@@ -6,7 +6,12 @@ import {
 
 import { getOrCreateAPIClient } from '../../client';
 import { IntegrationConfig } from '../../config';
-import { VsphereGuestInfo, VsphereGuestInfoDeprecated } from '../../types';
+import {
+  VsphereGuestInfo,
+  VsphereGuestInfoDeprecated,
+  VsphereVmDetails,
+  VsphereVmDetailsDeprecated,
+} from '../../types';
 import { Steps, Entities } from '../constants';
 import { createVmEntity } from './converter';
 
@@ -23,7 +28,7 @@ export async function fetchVms({
   let bios_uuid: string;
   let detailsQueryFailCount: number = 0;
   let detailsQuerySuccessCount: number = 0;
-  
+
   await jobState.iterateEntities(
     { _type: Entities.HOST._type },
     async (hostEntity) => {
@@ -46,9 +51,7 @@ export async function fetchVms({
           bios_uuid = vmDetails.identity?.bios_uuid;
           detailsQuerySuccessCount++;
         } catch (err) {
-          logger.info(
-            `Unable to query vcenter/vm/${vm.vm} endpoint.`,
-          );
+          logger.info(`Unable to query vcenter/vm/${vm.vm} endpoint.`);
           vmDetails = null;
           detailsQueryFailCount++;
         }
