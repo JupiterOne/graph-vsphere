@@ -361,6 +361,10 @@ export type VsphereGuestInfoDeprecated = {
   name: string;
 };
 
+export type VsphereVmNicId = {
+  nic: string
+}
+
 export type VsphereVmNics = {
   [key: string]: {
     start_connected: boolean;
