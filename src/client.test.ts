@@ -37,10 +37,10 @@ test('check-version-verify-auth', async () => {
   });
   const loggerTraceSpy = jest.spyOn(logger, 'publishInfoEvent');
   await apiClient.verifyAuthentication();
-  const version = await apiClient.getVersion();
+  const version = await apiClient.getVsphereVersion();
   expect(loggerTraceSpy).toHaveBeenCalledWith({
     name: 'vsphere_version_code' as IntegrationInfoEventName,
-    description: `Using API version v${version.major}.${version.minor}.${version.patch}`,
+    description: `Using API version v${version.value.version}`,
   });
 });
 

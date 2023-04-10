@@ -194,10 +194,11 @@ export class APIClient {
     try {
       // The version check requires authentication and is therefore
       // sufficient for testing.
-      const version = await this.getVersion();
+      // It also could be use to retrieve information of the users version.
+      const version = await this.getVsphereVersion();
       this.logger.publishInfoEvent({
         name: 'vsphere_version_code' as IntegrationInfoEventName,
-        description: `Using API version v${version.major}.${version.minor}.${version.patch}`,
+        description: `Using API version v${version.value.version}`,
       });
     } catch (err) {
       throw new IntegrationProviderAuthenticationError({
@@ -211,9 +212,7 @@ export class APIClient {
 
   public async getVersion(): Promise<APIVersion> {
     if (this.apiVersion.major == 0) {
-      const versionResponse: VsphereVersion = await this.request(
-        this.versionEndpoint,
-      );
+      const versionResponse: VsphereVersion = await this.getVsphereVersion();
       const versionArray = versionResponse.value.version.split('.');
       this.apiVersion.major = Number(versionArray[0]);
       this.apiVersion.minor = Number(versionArray[1]);
@@ -225,6 +224,12 @@ export class APIClient {
       );
     }
     return this.apiVersion;
+  }
+  public async getVsphereVersion(): Promise<VsphereVersion> {
+    const versionResponse: VsphereVersion = await this.request(
+      this.versionEndpoint,
+    );
+    return versionResponse;
   }
 
   /**
