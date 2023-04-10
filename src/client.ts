@@ -51,6 +51,7 @@ export class APIClient {
     minor: 0,
     patch: 0,
   };
+  private versionResponse: VsphereVersion;
   private versionEndpoint = `https://${this.config.domain}/rest/appliance/system/version/`;
   private baseUri = `https://${this.config.domain}/api/`;
   private baseUriDeprecated = `https://${this.config.domain}/rest/`;
@@ -212,8 +213,8 @@ export class APIClient {
 
   public async getVersion(): Promise<APIVersion> {
     if (this.apiVersion.major == 0) {
-      const versionResponse: VsphereVersion = await this.getVsphereVersion();
-      const versionArray = versionResponse.value.version.split('.');
+      this.versionResponse = await this.getVsphereVersion();
+      const versionArray = this.versionResponse.value.version.split('.');
       this.apiVersion.major = Number(versionArray[0]);
       this.apiVersion.minor = Number(versionArray[1]);
       this.apiVersion.patch = Number(versionArray[2]);
@@ -226,10 +227,13 @@ export class APIClient {
     return this.apiVersion;
   }
   public async getVsphereVersion(): Promise<VsphereVersion> {
-    const versionResponse: VsphereVersion = await this.request(
-      this.versionEndpoint,
-    );
-    return versionResponse;
+    if (this.apiVersion.major == 0) {
+      const versionResponse: VsphereVersion = await this.request(
+        this.versionEndpoint,
+      );
+      return versionResponse;
+    }
+    return this.versionResponse;
   }
 
   /**
