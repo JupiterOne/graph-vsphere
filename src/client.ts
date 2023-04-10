@@ -25,7 +25,7 @@ import {
   VsphereVm,
   VsphereVmDetails,
   VsphereVmDetailsDeprecated,
-  VsphereNicId,
+  VsphereVmNicId,
 } from './types';
 
 let client: APIClient;
