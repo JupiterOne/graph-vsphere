@@ -72,7 +72,7 @@ test('get-vm-guest', async () => {
 test('getNicIds', async () => {
   recording = setupProjectRecording({
     directory: __dirname,
-    name: 'getNicIds'
+    name: 'getNicIds',
   });
   const ids = ['vm-22', 'vm-23', 'vm-43', 'vm-44'];
   for (const id of ids) {
