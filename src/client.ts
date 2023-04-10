@@ -320,14 +320,14 @@ export class APIClient {
    * @param vmId Virtual machine identifier.
    * @returns Array of VsphereNicId; IDs associated with the VM's NICs
    */
-  public async getNicIds(
-    vmId: string,
-  ): Promise<VsphereNicId[]> {
+  public async getNicIds(vmId: string): Promise<VsphereNicId[]> {
     return this.versionedRequest(
-      await this.withVersionedBaseUri(`/api/vcenter/vm/${vmId}/hardware/ethernet`),
+      await this.withVersionedBaseUri(
+        `/api/vcenter/vm/${vmId}/hardware/ethernet`,
+      ),
     );
   }
-  
+
   /**
    * Iterates each network resource in the provider.
    *
