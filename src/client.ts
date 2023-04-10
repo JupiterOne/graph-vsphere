@@ -1,6 +1,7 @@
 import fetch, { Response } from 'node-fetch';
 import { retry } from '@lifeomic/attempt';
 import {
+  IntegrationInfoEventName,
   IntegrationLogger,
   IntegrationProviderAPIError,
   IntegrationProviderAuthenticationError,
@@ -193,7 +194,11 @@ export class APIClient {
     try {
       // The version check requires authentication and is therefore
       // sufficient for testing.
-      await this.getVersion();
+      const version = await this.getVersion();
+      this.logger.publishInfoEvent({
+        name: 'vsphere_version_code' as IntegrationInfoEventName,
+        description: `Using API version v${version.major}.${version.minor}.${version.patch}`,
+      });
     } catch (err) {
       throw new IntegrationProviderAuthenticationError({
         cause: err,
