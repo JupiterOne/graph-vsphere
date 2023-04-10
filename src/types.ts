@@ -362,8 +362,8 @@ export type VsphereGuestInfoDeprecated = {
 };
 
 export type VsphereVmNicId = {
-  nic: string
-}
+  nic: string;
+};
 
 export type VsphereVmNics = {
   [key: string]: {
