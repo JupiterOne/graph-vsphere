@@ -69,6 +69,17 @@ test('get-vm-guest', async () => {
   }
 });
 
+test('getNicIds', async () => {
+  recording = setupProjectRecording({
+    direcotry: __dirname,
+    name: 'getNicIds'
+  });
+  const ids = ['vm-22', 'vm-23', 'vm-43', 'vm-44'];
+  for (const id of ids) {
+    await apiClient.getNicIds(id);
+  }
+});
+
 test('iterate-hosts', async () => {
   recording = setupProjectRecording({
     directory: __dirname,
