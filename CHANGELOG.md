@@ -8,12 +8,6 @@ and this project adheres to
 
 ## [Unreleased]
 
-## 1.5.3 - 2023-04-07
-
-### Changed
-
-- Properties for vsphere_vm entities have been updated to include the MAC Address
-
 ## 1.5.2 - 2023-04-05
 
 ### Changed
