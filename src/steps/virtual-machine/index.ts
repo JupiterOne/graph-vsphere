@@ -52,14 +52,18 @@ export async function fetchVms({
           bios_uuid = vmDetails.identity?.bios_uuid;
           const nicIds = await apiClient.getNicIds(vm.vm as string);
           // Iterate through the nicIds and extract the corresponding MAC addresses from each NIC
-          mac_address = nicIds.map(({nic}) => vmDetails?.nics[nic].mac_address)
+          mac_address = nicIds.map(
+            ({ nic }) => vmDetails?.nics[nic].mac_address,
+          );
           detailsQuerySuccessCount++;
         } catch (err) {
           logger.info(`Unable to query vcenter/vm/${vm.vm} endpoint.`);
           vmDetails = null;
           detailsQueryFailCount++;
         }
-        await jobState.addEntity(createVmEntity(vm, vmGuest, bios_uuid, mac_address));
+        await jobState.addEntity(
+          createVmEntity(vm, vmGuest, bios_uuid, mac_address),
+        );
       }, hostEntity.hostname as string);
     },
   );
