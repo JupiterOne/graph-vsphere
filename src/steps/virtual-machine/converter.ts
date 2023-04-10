@@ -14,7 +14,7 @@ export function createVmEntity(
   vm: VsphereVm,
   vmGuest: VsphereGuestInfo | VsphereGuestInfoDeprecated | null,
   bios_uuid: string,
-  mac_address: string[],   
+  mac_address: string[],
 ): Entity {
   return createIntegrationEntity({
     entityData: {
