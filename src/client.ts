@@ -322,9 +322,7 @@ export class APIClient {
    */
   public async getNicIds(vmId: string): Promise<VsphereVmNicId[]> {
     return this.versionedRequest(
-      await this.withVersionedBaseUri(
-        `vcenter/vm/${vmId}/hardware/ethernet`,
-      ),
+      await this.withVersionedBaseUri(`vcenter/vm/${vmId}/hardware/ethernet`),
     );
   }
 
