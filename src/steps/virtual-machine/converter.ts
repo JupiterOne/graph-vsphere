@@ -31,7 +31,7 @@ export function createVmEntity(
         host: vmGuest?.host_name,
         ipAddress: vmGuest?.ip_address,
         uuid: bios_uuid,
-        mac_address: mac_address,
+        macAddress: mac_address,
       },
     },
   });
