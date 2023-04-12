@@ -1,13 +1,12 @@
 jest.setTimeout(500000);
+import { IntegrationInfoEventName } from '@jupiterone/integration-sdk-core';
 import { createMockIntegrationLogger } from '@jupiterone/integration-sdk-testing';
 import { integrationConfig } from '../test/config';
 import { Recording, setupProjectRecording } from '../test/recording';
 import { getOrCreateAPIClient } from './client';
 
-const apiClient = getOrCreateAPIClient(
-  integrationConfig,
-  createMockIntegrationLogger(),
-);
+const logger = createMockIntegrationLogger();
+const apiClient = getOrCreateAPIClient(integrationConfig, logger);
 
 // See test/README.md for details
 let recording: Recording;
@@ -28,6 +27,20 @@ test('check-version', async () => {
     major: 8,
     minor: 0,
     patch: 0,
+  });
+});
+
+test('check-version-verify-auth', async () => {
+  recording = setupProjectRecording({
+    directory: __dirname,
+    name: 'check-version',
+  });
+  const loggerTraceSpy = jest.spyOn(logger, 'publishInfoEvent');
+  await apiClient.verifyAuthentication();
+  const version = await apiClient.getVsphereVersion();
+  expect(loggerTraceSpy).toHaveBeenCalledWith({
+    name: 'vsphere_version_code' as IntegrationInfoEventName,
+    description: `Using API version v${version.value.version}`,
   });
 });
 

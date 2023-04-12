@@ -1,6 +1,7 @@
 import fetch, { Response } from 'node-fetch';
 import { retry } from '@lifeomic/attempt';
 import {
+  IntegrationInfoEventName,
   IntegrationLogger,
   IntegrationProviderAPIError,
   IntegrationProviderAuthenticationError,
@@ -50,6 +51,7 @@ export class APIClient {
     minor: 0,
     patch: 0,
   };
+  private versionResponse: VsphereVersion;
   private versionEndpoint = `https://${this.config.domain}/rest/appliance/system/version/`;
   private baseUri = `https://${this.config.domain}/api/`;
   private baseUriDeprecated = `https://${this.config.domain}/rest/`;
@@ -193,7 +195,12 @@ export class APIClient {
     try {
       // The version check requires authentication and is therefore
       // sufficient for testing.
-      await this.getVersion();
+      // It also could be use to retrieve information of the users version.
+      const version = await this.getVsphereVersion();
+      this.logger.publishInfoEvent({
+        name: 'vsphere_version_code' as IntegrationInfoEventName,
+        description: `Using API version v${version.value.version}`,
+      });
     } catch (err) {
       throw new IntegrationProviderAuthenticationError({
         cause: err,
@@ -206,10 +213,8 @@ export class APIClient {
 
   public async getVersion(): Promise<APIVersion> {
     if (this.apiVersion.major == 0) {
-      const versionResponse: VsphereVersion = await this.request(
-        this.versionEndpoint,
-      );
-      const versionArray = versionResponse.value.version.split('.');
+      this.versionResponse = await this.getVsphereVersion();
+      const versionArray = this.versionResponse.value.version.split('.');
       this.apiVersion.major = Number(versionArray[0]);
       this.apiVersion.minor = Number(versionArray[1]);
       this.apiVersion.patch = Number(versionArray[2]);
@@ -220,6 +225,15 @@ export class APIClient {
       );
     }
     return this.apiVersion;
+  }
+  public async getVsphereVersion(): Promise<VsphereVersion> {
+    if (this.apiVersion.major == 0) {
+      const versionResponse: VsphereVersion = await this.request(
+        this.versionEndpoint,
+      );
+      return versionResponse;
+    }
+    return this.versionResponse;
   }
 
   /**
