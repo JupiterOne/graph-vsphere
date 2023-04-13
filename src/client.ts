@@ -26,6 +26,7 @@ import {
   VsphereVm,
   VsphereVmDetails,
   VsphereVmDetailsDeprecated,
+  VsphereVmNicId,
 } from './types';
 
 let client: APIClient;
@@ -325,6 +326,18 @@ export class APIClient {
       vmGuestResponse = null;
     }
     return vmGuestResponse;
+  }
+
+  /**
+   * Returns the identifier of the virtual Ethernet adapter.
+   *
+   * @param vmId Virtual machine identifier.
+   * @returns Array of VsphereNicId; IDs associated with the VM's NICs
+   */
+  public async getNicIds(vmId: string): Promise<VsphereVmNicId[]> {
+    return this.versionedRequest(
+      await this.withVersionedBaseUri(`vcenter/vm/${vmId}/hardware/ethernet`),
+    );
   }
 
   /**
