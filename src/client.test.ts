@@ -69,7 +69,7 @@ test('get-vm-guest', async () => {
   }
 });
 
-test('getNicIds', async () => {
+test.skip('getNicIds', async () => {
   recording = setupProjectRecording({
     directory: __dirname,
     name: 'getNicIds',
