@@ -8,6 +8,10 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 1.5.5 - 2023-04-14
+
+- Converting release process to use `auto`.
+
 ## 1.5.4 - 2023-04-13
 
 - Properties for vsphere_vm entities have been updated to include the MAC
