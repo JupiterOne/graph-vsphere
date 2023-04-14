@@ -8,7 +8,7 @@ and this project adheres to
 
 ## [Unreleased]
 
-## 1.5.5 - 2023-04-14
+## 1.5.6 - 2023-04-14
 
 - Converting release process to use `auto`.
 
