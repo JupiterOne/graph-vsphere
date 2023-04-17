@@ -13,8 +13,8 @@ import { Entities } from '../constants';
 export function createVmEntity(
   vm: VsphereVm,
   vmGuest: VsphereGuestInfo | VsphereGuestInfoDeprecated | null,
-  bios_uuid: string,
-  mac_address: string[],
+  biosUuid: string,
+  macAddress: string[],
 ): Entity {
   return createIntegrationEntity({
     entityData: {
@@ -26,12 +26,13 @@ export function createVmEntity(
         memorySizeMiB: vm.memory_size_MiB,
         vm: vm.vm,
         name: vm.name,
+        os: vm.name,
         powerState: vm.power_state,
         cpuCount: vm.cpu_count,
         host: vmGuest?.host_name,
         ipAddress: vmGuest?.ip_address,
-        uuid: bios_uuid,
-        macAddress: mac_address,
+        uuid: biosUuid,
+        macAddress: macAddress,
       },
     },
   });
