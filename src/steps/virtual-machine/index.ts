@@ -25,8 +25,8 @@ export async function fetchVms({
   let guestQuerySuccessCount: number = 0;
   let vmGuest: VsphereGuestInfo | VsphereGuestInfoDeprecated | null;
   let vmDetails: VsphereVmDetails | VsphereVmDetailsDeprecated | null;
-  let bios_uuid: string;
-  let mac_address: string[];
+  let biosUuid: string;
+  let macAddress: string[];
   let detailsQueryFailCount: number = 0;
   let detailsQuerySuccessCount: number = 0;
 
@@ -49,10 +49,10 @@ export async function fetchVms({
         }
         try {
           vmDetails = await apiClient.getVm(vm.vm as string);
-          bios_uuid = vmDetails.identity?.bios_uuid;
+          biosUuid = vmDetails.identity?.bios_uuid;
           const nicIds = await apiClient.getNicIds(vm.vm as string);
           // Iterate through the nicIds and extract the corresponding MAC addresses from each NIC
-          mac_address = nicIds.map(
+          macAddress = nicIds.map(
             ({ nic }) => vmDetails?.nics[nic].mac_address,
           );
           detailsQuerySuccessCount++;
@@ -62,7 +62,7 @@ export async function fetchVms({
           detailsQueryFailCount++;
         }
         await jobState.addEntity(
-          createVmEntity(vm, vmGuest, bios_uuid, mac_address),
+          createVmEntity(vm, vmGuest, biosUuid, macAddress),
         );
       }, hostEntity.hostname as string);
     },
