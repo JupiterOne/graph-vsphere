@@ -22,6 +22,10 @@
   complete as many as possible based on the account's access. It is recommended
   that the account is provided with global readonly permissions to all inventory
   hierarchies.
+
+  NOTE: If you are receiving errors on the `Fetch Distributed Switch` step, you
+  may need to activate the `Enable Trust` option in you compute manager.
+
 - You must have permission in JupiterOne to install new integrations.
 - This integration currently supports vSphere versions 6.5 - 8.0 with the
   following steps only available in certain versions:
