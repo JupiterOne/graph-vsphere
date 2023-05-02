@@ -455,13 +455,24 @@ export class APIClient {
     clusterId: string,
     iteratee: ResourceIteratee<VsphereDistributedSwitch>,
   ): Promise<void> {
-    const distributedSwitches = await this.request(
-      this.withBaseUri(
-        `vcenter/namespace-management/distributed-switch-compatibility?cluster=${clusterId}`,
-      ),
-    );
-    for (const distributedSwitch of distributedSwitches) {
-      await iteratee(distributedSwitch);
+    try {
+      const distributedSwitches = await this.request(
+        this.withBaseUri(
+          `vcenter/namespace-management/distributed-switch-compatibility?cluster=${clusterId}`,
+        ),
+      );
+      for (const distributedSwitch of distributedSwitches) {
+        await iteratee(distributedSwitch);
+      }
+    } catch (err) {
+      this.logger.info(
+        { err, clusterId },
+        `Unable to query distributed switch list for cluster. This may be due to an API limitation or other server side errors.`,
+      );
+      this.logger.publishWarnEvent({
+        name: IntegrationWarnEventName.IngestionLimitEncountered,
+        description: `Unable to query distributed switch list for cluster ${clusterId}.  This may be due to an API limitation or other server side errors.`,
+      });
     }
   }
 }
