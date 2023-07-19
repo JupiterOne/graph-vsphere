@@ -8,6 +8,40 @@ for interacting with the VMware vSphere vCenter.
 
 Active SDDC in VMware vSphere is required.
 
+## Firewall
+
+It will probably be necessary to whitelist JupiterOne servers in your VMware
+vSphere. To do that you'll need to do the following:
+
+- Launch the VMware Cloud service
+- Navigate to "Inventory" on the left
+- Open vCenter on your SDDC and select "Firewall rules"
+- Click "Edit gateway firewall rules" under Default Compute Gateway
+- Click "Access via the internet"
+- Under the "Security" tab click "Gateway Firewall" on the left
+- Select the "Management Gateway" tab
+- Click "+ Add Rule"
+- For Source, check the "User defined groups" radio button
+- Click "Add Group"
+- Name the group then click "Set" under the Compute Members column
+- Paste the JupiterOne static IP addresses in the text box that appears and
+  click "Apply"
+- Check your newly created group and click "Apply"
+- Set the remaining fields as shown:
+
+```
+Source: `[created group]` Destinations: `vCenter` Services: `HTTPS` Action:
+`Allow`
+```
+
+- Click publish
+
+After publishing this rule, the JupiterOne servers will be able to allowed to
+interact with your vSphere SDDC and run the integration.
+
+The list of JupiterOne static IPs can be
+[found here](https://jupiterone.atlassian.net/wiki/spaces/INT/pages/37618044/Public+IPs+for+Integrations+outbound+traffic+enabling+on-premise+support).
+
 ## Provider account setup
 
 1. Have SDDC set up in VMware inventory.
