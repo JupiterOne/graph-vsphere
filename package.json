@@ -46,6 +46,7 @@
     "@lifeomic/attempt": "^3.0.3",
     "lodash": "^4.17.21",
     "minimist": "^1.2.6",
-    "node-fetch": "2"
+    "node-fetch": "2",
+    "prettier": "^3.0.0"
   }
 }
