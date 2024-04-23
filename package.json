@@ -1,6 +1,6 @@
 {
   "name": "@jupiterone/graph-vsphere",
-  "version": "1.5.7",
+  "version": "1.6.0",
   "description": "A JupiterOne Integration for ingesting data of the VMware vSphere",
   "repository": {
     "type": "git",
