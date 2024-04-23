@@ -26,7 +26,7 @@ export async function fetchDistributedSwitches({
       await apiClient.iterateDistributedSwitches(
         clusterEntity.cluster as string,
         async (distributedSwitch) => {
-          const hasKey = await jobState.hasKey(
+          const hasKey = jobState.hasKey(
             createDistributedSwitchKey(distributedSwitch.distributed_switch),
           );
 
