@@ -20,6 +20,10 @@ export const instanceConfigFields: IntegrationInstanceConfigFieldMap = {
     type: 'string',
     mask: true,
   },
+  usesNsx: {
+    type: 'boolean',
+    optional: true,
+  },
   disableTlsVerification: {
     type: 'boolean',
     optional: true,
@@ -46,6 +50,11 @@ export interface IntegrationConfig extends IntegrationInstanceConfig {
    * The provider account password used to get session token.
    */
   password: string;
+
+  /**
+   * Configuration that specifies whether the integration utilizes VMware NSX (Network Virtualization Platform) features.
+   */
+  usesNsx?: boolean;
 
   /**
    * Disable TLS certificate verification for hosts that cannot install certificates.

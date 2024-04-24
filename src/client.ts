@@ -455,9 +455,11 @@ export class APIClient {
     clusterId: string,
     iteratee: ResourceIteratee<VsphereDistributedSwitch>,
   ): Promise<void> {
+    const usesNsx = this.config.usesNsx;
+
     const distributedSwitches = await this.request(
       this.withBaseUri(
-        `vcenter/namespace-management/distributed-switch-compatibility?cluster=${clusterId}`,
+        `vcenter/namespace-management/distributed-switch-compatibility?cluster=${clusterId}${usesNsx ? '&network_provider=VSPHERE_NETWORK' : ''}`,
       ),
     );
     for (const distributedSwitch of distributedSwitches) {
