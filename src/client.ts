@@ -1,5 +1,3 @@
-import fetch, { Response } from 'node-fetch';
-import { retry } from '@lifeomic/attempt';
 import {
   IntegrationInfoEventName,
   IntegrationLogger,
@@ -7,6 +5,8 @@ import {
   IntegrationProviderAuthenticationError,
   IntegrationWarnEventName,
 } from '@jupiterone/integration-sdk-core';
+import { retry } from '@lifeomic/attempt';
+import fetch, { Response } from 'node-fetch';
 
 import { IntegrationConfig } from './config';
 import {
@@ -459,7 +459,7 @@ export class APIClient {
 
     const distributedSwitches = await this.request(
       this.withBaseUri(
-        `vcenter/namespace-management/distributed-switch-compatibility?cluster=${clusterId}${usesNsx ? '&network_provider=VSPHERE_NETWORK' : ''}`,
+        `vcenter/namespace-management/distributed-switch-compatibility?cluster=${clusterId}&network_provider=${usesNsx ? 'NSXT_CONTAINER_PLUGIN' : 'VSPHERE_NETWORK'}`,
       ),
     );
     for (const distributedSwitch of distributedSwitches) {
