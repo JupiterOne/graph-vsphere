@@ -52,7 +52,7 @@ export interface IntegrationConfig extends IntegrationInstanceConfig {
   password: string;
 
   /**
-   * Disable TLS certificate verification for hosts that cannot install certificates.
+   * Configuration that specifies whether the integration utilizes VMware NSX (Network Virtualization Platform) features.
    */
   usesNsx?: boolean;
 
