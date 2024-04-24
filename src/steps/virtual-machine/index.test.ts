@@ -13,7 +13,7 @@ afterEach(async () => {
 test('fetch-vm', async () => {
   recording = setupProjectRecording({
     directory: __dirname,
-    name: 'fetch-vm ',
+    name: 'fetch-vm',
   });
 
   const stepConfig = buildStepTestConfigForStep(Steps.VM);

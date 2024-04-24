@@ -459,7 +459,7 @@ export class APIClient {
 
     const distributedSwitches = await this.request(
       this.withBaseUri(
-        `vcenter/namespace-management/distributed-switch-compatibility?cluster=${clusterId}${usesNsx ? '&network_provider=NSXT_CONTAINER_PLUGIN' : '&network_provider=VSPHERE_NETWORK'}`,
+        `vcenter/namespace-management/distributed-switch-compatibility?cluster=${clusterId}&network_provider=${usesNsx ? 'NSXT_CONTAINER_PLUGIN' : 'VSPHERE_NETWORK'}`,
       ),
     );
     for (const distributedSwitch of distributedSwitches) {
